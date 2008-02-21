@@ -1,0 +1,35 @@
+#summary Timeline
+
+=Timeline=
+
+Links:
+ code.google.com
+ w3c.org: xhtml primer, css primer
+ 
+ read about locking 
+ http://groups.google.com/group/django-users/browse_thread/thread/e9db1349014aa1f4/9a697f65a617b5f6?#9a697f65a617b5f6
+
+Alpha1 (6.03):
+ pagelist
+ mysql
+ wikimarkup + markdown (or-or)
+ attachments
+ simple concurrent blocking
+
+Spec ():
+ Design (ER-diagram)
+
+Alpha2 ():
+ xmlrpc (SQL, transactions)
+ tags
+ categories (hierarchy)
+ ?comments
+ diff
+
+Spec ():
+ Design (ER-diagram)
+
+Beta ():
+ authorization
+ roles
+ ssl
