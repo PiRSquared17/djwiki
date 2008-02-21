@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}wiki page{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <hr> 
+    <pre>{{ page.content }}</pre>
+    <hr><br>
+
+    {% ifequal page.revision pageTitle.head_revision %}
+      <input type="button" value="edit" onclick="location.href=location.pathname+'edit/'" class="default"/> 
+    {% else %}
+      edit
+    {% endifequal %}
+
+    {% ifnotequal page.revision 0 %}
+      {% ifequal page.revision pageTitle.head_revision %}
+        <input type="button" value="rev{{page.prev_revision}}" onclick="location.href=location.pathname+'rev/{{page.prev_revision}}/'" class="default"/>
+      {% else %} 
+        <input type="button" value="rev{{page.prev_revision}}" onclick="location.href=location.pathname+'../{{page.prev_revision}}/'" class="default"/>
+      {% endifequal %}
+    {% else %}
+      | first rev
+      {% ifequal pageTitle.head_revision 0 %}
+       | 
+      {% endifequal %}
+    {% endifnotequal %}
+
+    {% ifnotequal page.revision pageTitle.head_revision %} 
+      <input type="button" value="rev{{page.next_revision}}" onclick="location.href=location.pathname+'../{{page.next_revision}}/'" class="default"/> 
+    {% else %}
+      head rev
+    {% endifnotequal %}
+
+    <b>&nbsp Author: </b>{{ page.author }}
+    <b>&nbsp Revision: </b>{{ page.revision }}
+    <b>&nbsp Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
+
+{% endblock %}

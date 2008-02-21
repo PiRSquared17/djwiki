@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Create a new page</h1>
+
+<form method="post" action="">
+  <table>{{ form.as_table }}</table>
+  <input type="submit" value="save" class="default"/>
+  <input type="button" value="discard" onclick="history.back()"/>
+</form>
+
+{% endblock %}
