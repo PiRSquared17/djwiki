@@ -18,6 +18,7 @@ class WikiPageContent(models.Model):
   author = models.CharField(max_length=100)
   revision = models.IntegerField(default=0)
   modificationTime = models.DateTimeField(auto_now_add=True) 
+  markupType = models.CharField(max_length=100)
   class Meta:
     unique_together = ("title", "revision")
 
