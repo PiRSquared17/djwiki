@@ -67,7 +67,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'djwiki.urls'
 
 TEMPLATE_DIRS = (
-    'D:/ALeRT/devel/python/django/djwiki/templates/' 
+    'templates/' 
 )
 
 INSTALLED_APPS = (
