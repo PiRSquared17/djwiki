@@ -2,10 +2,23 @@
 
 {% block title %}wiki page{% endblock %}
 
+{% load markdown_text %}
+{% load mediawiki_text %}
+
 {% block content %}
+ 
     <h1>{{ page.title }}</h1>
     <hr> 
-    <pre>{{ page.content }}</pre>
+
+    <div class="content">
+       {% ifequal page.markupType "markdown" %}
+         {{ page.content|markdown_wikify|safe }}
+       {% else %}
+         {{ page.content|mediawiki_wikify|safe }}
+       {% endifequal %}
+
+    </div>
+    
     <hr><br>
 
     {% ifequal page.revision pageTitle.head_revision %}
