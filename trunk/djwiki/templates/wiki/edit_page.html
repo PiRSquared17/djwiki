@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit page</h1>
+
+<form method="post" action="">
+  <table>{{ form.as_table }}</table>
+  <input type="button" align="left" value="discard" onclick="location.href='../'"/> 
+  <input type="submit" align="left" value="save" class="default"/>
+</form>
+
+{% endblock %}
