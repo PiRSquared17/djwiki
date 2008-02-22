@@ -8,7 +8,7 @@
 {% block content %}
  
     <h1>{{ page.title }}</h1>
-    <hr> 
+    <hr/> 
 
     <div class="content">
        {% ifequal page.markupType "markdown" %}
@@ -19,7 +19,7 @@
 
     </div>
     
-    <hr><br>
+    <hr/><br/>
 
     {% ifequal page.revision pageTitle.head_revision %}
       <input type="button" value="edit" onclick="location.href=location.pathname+'edit/'" class="default"/> 
@@ -46,8 +46,8 @@
       head rev
     {% endifnotequal %}
 
-    <b>&nbsp Author: </b>{{ page.author }}
-    <b>&nbsp Revision: </b>{{ page.revision }}
-    <b>&nbsp Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
+    <b>&nbsp; Author: </b>{{ page.author }}
+    <b>&nbsp; Revision: </b>{{ page.revision }}
+    <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
 
 {% endblock %}
