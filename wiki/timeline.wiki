@@ -13,7 +13,7 @@ Links:
 Alpha1 (6.03):
  pagelist
  mysql
- wikimarkup + markdown (or-or)
+ wikimarkup + markdown (or-or) *ALeRT - done rev #10*
  attachments
  simple concurrent blocking
 
