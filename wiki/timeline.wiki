@@ -13,7 +13,7 @@ Alpha1 (6.03):
   * mysql
   * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*
   * attachments
-  * simple concurrent blocking
+  * simple concurrent blocking _*ALeRT - done rev #23*
 
 Spec ():
   * Design (ER-diagram)
