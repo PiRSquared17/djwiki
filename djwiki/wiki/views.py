@@ -10,9 +10,22 @@ def view_page(request, page_title='home'):
     page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'page_list' : WikiPageTitle.objects.all()})
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 
+	'pages_list' : WikiPageTitle.objects.all()})
 
 #----------------------------------------------------------------------------------------------------------
+def pages_list(request, page_title='home'):
+  try:
+    page_list = WikiPageTitle.objects.all();
+  except:
+    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
+  return render_to_response('wiki/pages_list.html', 
+    {'pages_list' : WikiPageTitle.objects.all(),
+     'count' :0,
+     'pages_content' : WikiPageContent.objects.all()})
+
+#----------------------------------------------------------------------------------------------------------
+
 
 def view_revision(request, page_title, rev):
   try:

@@ -5,12 +5,14 @@ class WikiPageTitle(models.Model):
   title = models.CharField(max_length=100, unique=True)
   head_revision = models.IntegerField(default=0)
 
+  def HeadRevisionContent(self):
+	return WikiPageContent.objects.get(title=self,revision = self.head_revision)
+
   class Admin:
     pass
-
   def __unicode__(self):
     return self.title
-
+  
 
 class WikiPageContent(models.Model):
   title = models.ForeignKey(WikiPageTitle)
