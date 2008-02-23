@@ -9,12 +9,12 @@ Links:
   * ER-diagram sample [http://www.conceptdraw.com/products/img/ScreenShots/cd5/software/SampleDatabaseLayout.gif image]
   * html-diff [http://web.archive.org/web/20040416194325/http://www.webwareforpython.org/~ianb/w4py.org/Wiki/lib/htmldiff.py python script]
 Alpha1 (6.03):
-  * pagelist *SAN - base functions rev #27*
+  * pagelist _*SAN - base functions rev #27*_
   * mysql
   * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*_
   * attachments
   * simple concurrent blocking _*ALeRT - done rev #23*_
-     * navigation menu base functions *SAN rev #27
+     * navigation menu base functions _*SAN rev #27 *_
 
 Spec ():
   * Design (ER-diagram)
