@@ -10,7 +10,7 @@ def view_page(request, page_title='home'):
     page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
     return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle})
   except:
-    return create_page(request, page_title)
+    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
 
 #----------------------------------------------------------------------------------------------------------
 
@@ -28,22 +28,24 @@ def view_revision(request, page_title, rev):
 #----------------------------------------------------------------------------------------------------------
 
 def create_page(request, page_title):
-  try:
-    pageTitle = WikiPageTitle.objects.get(title=page_title)
-  except:
-    pageTitle = WikiPageTitle()
-    pageTitle.title = page_title
-    pageTitle.save()
-  try:
-    page = WikiPageContent()
-    page.title = pageTitle
-    page.revision = pageTitle.head_revision     
-  except:
-    return view_page(request, page_title)
+  if request.method == 'GET':
+    try:
+      pageTitle, created = WikiPageTitle.objects.get_or_create(title=page_title)
+      page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
+      return HttpResponseRedirect("/wiki/%s/" % page_title)
+    except:
+      editForm = WikiEditForm(initial={'revision': pageTitle.head_revision, 'title' : pageTitle.title})
 
-  if request.method == 'POST':
+  elif request.method == 'POST':
+    pageTitle, created = WikiPageTitle.objects.get_or_create(title=page_title)
     editForm = WikiEditForm(request.POST.copy())
 
+    try:
+      WikiPageContent.objects.get(title = pageTitle, revision = 0)  
+      editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
+    except:
+      pass
+    
     if editForm.is_valid():
       page = editForm.save(commit=False) 
       page.revision = pageTitle.head_revision
@@ -51,8 +53,6 @@ def create_page(request, page_title):
       pageTitle.save()
       page.save()
       return HttpResponseRedirect("/wiki/%s/" % pageTitle.title)
-  else:
-    editForm = WikiEditForm(instance=page)
 
   return render_to_response('wiki/create_page.html', {'form': editForm})
 
@@ -68,18 +68,23 @@ def edit_page(request, page_title):
 
   if request.method == 'POST':
     editForm = WikiEditForm(request.POST.copy())
+    newPage = editForm.save(commit=False)           
 
+    if newPage.revision != pageTitle.head_revision + 1:
+      editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
+
+    if newPage.content == page.content:
+      editForm.errors['content'] = [unicode("nothing changed")]
 
     if editForm.is_valid():
-      page = editForm.save(commit=False) 
       pageTitle.head_revision = pageTitle.head_revision + 1
-      page.revision = pageTitle.head_revision
       pageTitle.save()
-      page.title = pageTitle
-      page.save()
-      return HttpResponseRedirect("/wiki/%s/" % page.title)
+      newPage.title = pageTitle
+      newPage.save()
+      return HttpResponseRedirect("/wiki/%s/" % newPage.title)
+        
   else:
     page.revision = pageTitle.head_revision + 1
-    editForm = WikiEditForm(instance = page)
+    editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title})
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page})
