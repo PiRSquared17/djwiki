@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}wiki page{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+/* OBJECT LISTS */
+.objectlist { clear:both; margin:0 -20px; color:#666; }
+.objectlist li a { display:block; padding:1em 20px; }
+.objectlist li a:hover { background:#5b80b2; color:#3B5572; color:#fff; text-decoration:none; }
+.related h2 { font-size: 1em; margin-bottom: 0.6em; }
+.related .objectlist li a { padding: 0.6em 20px; }
+.related .objectlist li a.odd { background:#eee; }
+.related .objectlist li a.even { background:#5b80b2; color:#3B5572; color:#fff; }
+</style>
+
+    <h1>Pages list</h1>
+    <hr/> 
+
+    <ul class="objectlist">
+        {% for choice in pages_list %}
+            <li >
+            <a href="../wiki/{{ choice }}"> {{ choice.title }}  {{Index}}</a></li>
+	    Head rev No: {{choice.head_revision}}
+	    Auth:{{choice.HeadRevisionContent.author}}
+	    Modificated:{{choice.HeadRevisionContent.modificationTime}}
+        {% endfor %}
+    </ul>
+
+{% endblock %}

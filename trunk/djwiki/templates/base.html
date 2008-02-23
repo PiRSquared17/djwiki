@@ -6,6 +6,22 @@
     <link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
     {% block extrahead %}{% endblock %}
   </head>
+
+<style type="text/css">
+<!-- 	#menu-nav {padding: 5px; border: 1px solid #000; margin-bottom: 25px;height : 25px;}
+  	#menu-nav input {margin-top: 0px;margin-right: 0;padding: 3px 15px;
+		display: inline;float : right;}
+--> </style>
+
+  <div id="menu-nav">
+    <input type="button" value="Backward" onclick="history.back()"/>
+    <input type="button" value="Forward" onclick="history.forward()"/>
+    <input type="button" value="Login" onclick="location.href='http://localhost:8000/wiki'"/>
+    <input type="button" value="List" onclick="location.href='http://localhost:8000/list'"/>
+    <input type="button" value="Home" onclick="location.href='http://localhost:8000/wiki'"/>
+  </div>
+
+
   <body>
     <div id="content" class="colM">
     <div id="content-main">
@@ -13,3 +29,4 @@
     </div></div>
   </body>
 </html>
+
