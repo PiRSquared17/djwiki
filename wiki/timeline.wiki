@@ -11,9 +11,9 @@ Links:
 Alpha1 (6.03):
   * pagelist
   * mysql
-  * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*
+  * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*_
   * attachments
-  * simple concurrent blocking _*ALeRT - done rev #23*
+  * simple concurrent blocking _*ALeRT - done rev #23*_
 
 Spec ():
   * Design (ER-diagram)
