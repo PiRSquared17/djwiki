@@ -14,7 +14,7 @@ Alpha1 (6.03):
   * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*_
   * attachments
   * simple concurrent blocking _*ALeRT - done rev #23*_
-     *navigation menu base functions *SAN rev #27
+     * navigation menu base functions *SAN rev #27
 
 Spec ():
   * Design (ER-diagram)
