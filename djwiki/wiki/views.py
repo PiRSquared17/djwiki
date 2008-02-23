@@ -8,9 +8,9 @@ def view_page(request, page_title='home'):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)
     page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
-    return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle})
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'page_list' : WikiPageTitle.objects.all()})
 
 #----------------------------------------------------------------------------------------------------------
 
