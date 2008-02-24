@@ -21,10 +21,10 @@
     <ul class="objectlist">
         {% for choice in pages_list %}
             <li >
-            <a href="../wiki/{{ choice }}"> {{ choice.title }}  {{Index}}</a></li>
+            <a href="../{{choice.title}}"> {{ choice.title }}  {{Index}}</a></li>
 	    Head rev No: {{choice.head_revision}}
-	    Auth:{{choice.HeadRevisionContent.author}}
-	    Modificated:{{choice.HeadRevisionContent.modificationTime}}
+	    Auth:{{choice.headRevisionContent.author}}
+	    Modificated:{{choice.headRevisionContent.modificationTime}}
         {% endfor %}
     </ul>
 

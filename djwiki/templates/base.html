@@ -16,9 +16,9 @@
   <div id="menu-nav">
     <input type="button" value="Backward" onclick="history.back()"/>
     <input type="button" value="Forward" onclick="history.forward()"/>
-    <input type="button" value="Login" onclick="location.href='http://localhost:8000/wiki'"/>
-    <input type="button" value="List" onclick="location.href='http://localhost:8000/list'"/>
-    <input type="button" value="Home" onclick="location.href='http://localhost:8000/wiki'"/>
+    <input type="button" value="Login" onclick="location.href='/wiki'"/>
+    <input type="button" value="List" onclick="location.href='{% url djwiki.wiki.views.pages_list %}'"/>
+    <input type="button" value="Home" onclick="location.href='/wiki'"/>
   </div>
 
 
