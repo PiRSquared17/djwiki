@@ -10,8 +10,7 @@ def view_page(request, page_title='home'):
     page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 
-	'pages_list' : WikiPageTitle.objects.all()})
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle})
 
 #----------------------------------------------------------------------------------------------------------
 def pages_list(request, page_title='home'):
@@ -43,14 +42,20 @@ def view_revision(request, page_title, rev):
 def create_page(request, page_title):
   if request.method == 'GET':
     try:
-      pageTitle, created = WikiPageTitle.objects.get_or_create(title=page_title)
+      pageTitle = WikiPageTitle.objects.get(title=page_title)
       page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
-      return HttpResponseRedirect("/wiki/%s/" % page_title)
     except:
+      pageTitle = WikiPageTitle()
+      pageTitle.title = page_title
       editForm = WikiEditForm(initial={'revision': pageTitle.head_revision, 'title' : pageTitle.title})
+    else:
+      return HttpResponseRedirect("/wiki/%s/" % page_title)
 
   elif request.method == 'POST':
-    pageTitle, created = WikiPageTitle.objects.get_or_create(title=page_title)
+    pageTitle = WikiPageTitle()
+    pageTitle.title = page_title
+    pageTitle.save()
+
     editForm = WikiEditForm(request.POST.copy())
 
     try:
