@@ -14,3 +14,6 @@ class WikiEditForm(ModelForm):
 
   class Meta:
     model = WikiPageContent
+
+class UploadForm(Form):
+  file = FileField()
