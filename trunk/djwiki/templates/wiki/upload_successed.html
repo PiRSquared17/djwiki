@@ -3,16 +3,22 @@
 {% block content %}
 <h1>Upload complete</h1>
 
-Your file {{filename}} has been successfully loaded into {{server_path}}
-<br>
-Markdownd link: {{markdown_link}}
-<br>
-Markup link:  {{markup_link}}
+<div style="overflow:auto; height:300px; width:300px">
+  <a href = "/static/{{filename}}"><img src = "/static/{{filename}}" alt = "{{filename}}"></a>
+</div>
 
+<br/>
 
-<form enctype="multipart/form-data" method="post">
-  <input type="button" align="left" value="next file" onclick="history.back()"  />   
-  <input type="button" align="left" value="OK" onclick="location.href='../'"/> 
-</form>
+Your image has been successfully uploaded!
+<br/>
+<br/>
+<b>markdown link:</b>  <input type="text" align="left" value="{{markdownLink}}" readonly size="50"/> 
+<br/>
+<b>mediawiki markup link:</b> <input type="text" align="left" value="{{mediawikiLink}}" readonly size="50"/> 
+
+<br/><br/>
+
+<input type="button" align="left" value="next file" onclick="location.href='/wiki/upload/'" class="default"/>   
+<input type="button" align="left" value="OK" onclick="location.href='/wiki/home/'" class="default"/> 
   
 {% endblock %}
