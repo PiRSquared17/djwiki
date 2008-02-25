@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload complete</h1>
+
+Your file {{filename}} has been successfully loaded into {{server_path}}
+<br>
+Markdownd link: {{markdown_link}}
+<br>
+Markup link:  {{markup_link}}
+
+
+<form enctype="multipart/form-data" method="post">
+  <input type="button" align="left" value="next file" onclick="history.back()"  />   
+  <input type="button" align="left" value="OK" onclick="location.href='../'"/> 
+</form>
+  
+{% endblock %}

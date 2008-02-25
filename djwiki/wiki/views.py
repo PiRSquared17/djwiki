@@ -112,18 +112,20 @@ def edit_page(request, page_title):
 #------------------------------------------------------------------------
 def upload_page(request):
   if request.method == 'GET':
-      editForm = UploadForm(initial={'revision': 'hello', 'title' : 'hello'})
-
+      editForm = UploadForm()
   elif request.method == 'POST':
       editForm = UploadForm(request.POST.copy(),request.FILES)
-      
-      file = request.FILES.getlist('file')[0]  
-      filename = file['filename']  
-      fd = open('wiki/media/%s' % (filename), 'wb')  
-      fd.write(file['content'])  
-      fd.close() 
-
-   
+      try:
+        file = request.FILES.getlist('file')[0]  
+        filename = file['filename']  
+	server_path = '%s%s' % (MEDIA_ROOT,filename)
+        fd = open(server_path, 'wb')  
+        fd.write(file['content'])  
+        fd.close() 
+        return render_to_response('wiki/upload_successed.html',
+	{'filename':filename, 'server_path':server_path})
+      except:
+        file = '';
   return render_to_response('wiki/upload_page.html', {'form': editForm})
 
 
