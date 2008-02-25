@@ -12,7 +12,7 @@ Alpha1 (6.03):
   * pagelist _*SAN - base functions rev #27*_
   * mysql _*ALeRT - done, check [http://code.google.com/p/djwiki/wiki/deployment this] out*_
   * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*_
-  * attachments _*SAN rev base functions
+  * attachments _*SAN rev base functions*_
        * error checking
   * simple concurrent blocking _*ALeRT - done rev #23*_
   * navigation menu base functions _*SAN rev #27 *_
