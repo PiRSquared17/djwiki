@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload page</h1>
+
+{{ttt}}
+
+<form enctype="multipart/form-data" method="post">
+  <table>{{ form.as_table }}</table>
+  
+  <input type="button" align="left" value="discard" onclick="location.href='../'"/> 
+  <input type="submit" align="left" value="upload" class="default"/>
+</form>
+  
+{% endblock %}

@@ -3,6 +3,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.create_update import *
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from djwiki.wiki.myforms import *
+from djwiki.settings import MEDIA_ROOT  
+
 
 def view_page(request, page_title='home'):
   try:
@@ -106,3 +108,22 @@ def edit_page(request, page_title):
     editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title})
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page})
+
+#------------------------------------------------------------------------
+def upload_page(request):
+  if request.method == 'GET':
+      editForm = UploadForm(initial={'revision': 'hello', 'title' : 'hello'})
+
+  elif request.method == 'POST':
+      editForm = UploadForm(request.POST.copy(),request.FILES)
+      
+      file = request.FILES.getlist('file')[0]  
+      filename = file['filename']  
+      fd = open('wiki/media/%s' % (filename), 'wb')  
+      fd.write(file['content'])  
+      fd.close() 
+
+   
+  return render_to_response('wiki/upload_page.html', {'form': editForm})
+
+
