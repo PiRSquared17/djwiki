@@ -1,0 +1,25 @@
+= step by step deployment djwiki on mysql =
+
+  # install mysql
+  # create database for djwiki 
+    {{{mysql\bin\mysqladmin.exe -u login -ppswd create djwiki}}}
+  # dump current db 
+    {{{manage.py dumpdata > wiki.json}}}
+  # change settings.py
+    {{{
+    ...
+      DATABASE_ENGINE = 'mysql' 
+      DATABASE_NAME = 'djwiki'
+      DATABASE_USER = 'login'             
+      DATABASE_PASSWORD = 'pswd'       
+      DATABASE_HOST = 'localhost'     
+      DATABASE_PORT = '3306'  
+    ...
+    }}}
+  # create tables in mysql db
+    {{{manage.py syncdb}}}
+  # load data from dump
+    {{{manage.py loaddata wiki.json}}}
+  # run the server
+    {{{manage.py runserver}}}
+  # *have fun*
