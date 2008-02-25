@@ -16,4 +16,4 @@ class WikiEditForm(ModelForm):
     model = WikiPageContent
 
 class UploadForm(Form):
-  file = ImageField()
+  uploadFile = FileField()
