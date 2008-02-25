@@ -110,22 +110,31 @@ def edit_page(request, page_title):
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page})
 
 #------------------------------------------------------------------------
+
 def upload_page(request):
   if request.method == 'GET':
-      uploadForm = UploadForm()
+    upForm = UploadForm()
   elif request.method == 'POST':
-      uploadForm = UploadForm(request.POST.copy(),request.FILES)
-      if uploadForm.is_valid():
-          file = request.FILES.getlist('uploadFile')[0]  
-          filename = file['filename']  
-          server_path = '%s%s' % (MEDIA_ROOT,filename)
-          fd = open(server_path, 'wb')  
-          fd.write(file['content'])  
-          fd.close() 
-          return render_to_response('wiki/upload_successed.html',
-              {'filename':filename, 'server_path':server_path})
-  return render_to_response('wiki/upload_page.html', {'form': uploadForm, 'ttt':request.FILES})
+    upForm = UploadForm(request.POST.copy(),request.FILES)
+    if upForm.is_valid():
+      filename = upForm.cleaned_data['file'].filename
+      server_path = '%s%s' % (MEDIA_ROOT,filename)
+      fd = open(server_path, 'wb')  
+      fd.write(upForm.cleaned_data['file'].content)  
+      fd.close() 
+      return HttpResponseRedirect("/wiki/upload/successful/?f=%s" % filename)
 
-def upload_successed(request,filename):
-  return render_to_response('wiki/upload_successed.html', {'filename': filename})
+  return render_to_response('wiki/upload_page.html', {'form': upForm})
+
+#------------------------------------------------------------------------
+
+def upload_done_page(request):
+  if 'f' in request.GET:
+    filename = request.GET['f']
+    mediawikiLink = '[[Image:%s|%s]]' % (filename, filename)
+    markdownLink = '![%s](/static/%s "%s")' % (filename, filename, filename)
+    return render_to_response('wiki/upload_successed.html', 
+           {'filename': filename, 'mediawikiLink': mediawikiLink, 'markdownLink' : markdownLink})
+  else:
+    raise Http404
 
