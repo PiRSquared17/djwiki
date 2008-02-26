@@ -17,6 +17,7 @@ Alpha1 (6.03):
        * error checking
   * simple concurrent blocking _*ALeRT - done rev #23*_
   * navigation menu base functions _*SAN rev #27 *_
+  * remove css code from templates
 
 Spec ():
   * Design (ER-diagram)
