@@ -3,7 +3,7 @@
   # install mysql
   # create database for djwiki 
     {{{mysql\bin\mysqladmin.exe -u login -ppswd create djwiki}}}
-  # dump current db 
+  # dump current db  (optional)
     {{{manage.py dumpdata > wiki.json}}}
   # change settings.py
     {{{
@@ -17,8 +17,10 @@
     ...
     }}}
   # create tables in mysql db
+    NOTE: Python module MySQLdb should be installed to run this command successfull
+    download it: http://sourceforge.net/project/showfiles.php?group_id=22307
     {{{manage.py syncdb}}}
-  # load data from dump
+  # load data from dump (optional)
     {{{manage.py loaddata wiki.json}}}
   # run the server
     {{{manage.py runserver}}}
