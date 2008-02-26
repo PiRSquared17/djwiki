@@ -1,6 +1,7 @@
 = step by step deployment djwiki on mysql =
 
   # install mysql
+    Get it from here (for eg.) http://www.mysql.ru/download/
   # create database for djwiki 
     {{{mysql\bin\mysqladmin.exe -u login -ppswd create djwiki}}}
   # dump current db  (optional)
