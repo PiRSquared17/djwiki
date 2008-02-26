@@ -54,18 +54,20 @@ def create_page(request, page_title):
       return HttpResponseRedirect("/wiki/%s/" % page_title)
 
   elif request.method == 'POST':
-    pageTitle = WikiPageTitle()
-    pageTitle.title = page_title
-    pageTitle.save()
+
+    lockErrorMsg = [unicode("Someone has changed this page. Unable to save this version.")]
+    try:
+      pageTitle, created = WikiPageTitle.objects.get_or_create(title = page_title)  
+      if not created:
+        editForm.errors['title'] = lockErrorMsg
+      else:
+        WikiPageContent.objects.get(title = pageTitle, revision = 0)  
+        editForm.errors['title'] = lockErrorMsg
+    except:
+      pass
 
     editForm = WikiEditForm(request.POST.copy())
 
-    try:
-      WikiPageContent.objects.get(title = pageTitle, revision = 0)  
-      editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
-    except:
-      pass
-    
     if editForm.is_valid():
       page = editForm.save(commit=False) 
       page.revision = pageTitle.head_revision
