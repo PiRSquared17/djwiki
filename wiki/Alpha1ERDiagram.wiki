@@ -1,6 +1,6 @@
 #summary One-sentence summary of this page.
 
-= ER Diagram =
+= Alpha 1 ER Diagram =
 
 [http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png]
 
