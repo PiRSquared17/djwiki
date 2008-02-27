@@ -3,29 +3,20 @@
 {% block title %}wiki page{% endblock %}
 
 {% block content %}
-
-<style type="text/css">
-/* OBJECT LISTS */
-.objectlist { clear:both; margin:0 -20px; color:#666; }
-.objectlist li a { display:block; padding:1em 20px; }
-.objectlist li a:hover { background:#5b80b2; color:#3B5572; color:#fff; text-decoration:none; }
-.related h2 { font-size: 1em; margin-bottom: 0.6em; }
-.related .objectlist li a { padding: 0.6em 20px; }
-.related .objectlist li a.odd { background:#eee; }
-.related .objectlist li a.even { background:#5b80b2; color:#3B5572; color:#fff; }
-</style>
-
-    <h1>Pages list</h1>
-    <hr/> 
-
-    <ul class="objectlist">
+                      
+    <hr/><br/>
+    <h1>Page list</h1>
+    <br/>
+    <table cellspacing="0">
+    <tbody>
         {% for choice in pages_list %}
-            <li >
-            <a href="../{{choice.title}}"> {{ choice.title }}  {{Index}}</a></li>
-	    Head rev No: {{choice.head_revision}}
-	    Auth:{{choice.headRevisionContent.author}}
-	    Modificated:{{choice.headRevisionContent.modificationTime}}
+          <tr class="{% cycle 'row1' 'row2' %}">
+            <th scope="col"><a href="../{{choice.title}}"> {{ choice.title }}  {{Index}}</a></th>
+            <th scope="col">Head rev No: {{choice.head_revision}}</th>
+            <th scope="col">Auth:{{choice.headRevisionContent.author}}</th>
+            <th scope="col">Modificated:{{choice.headRevisionContent.modificationTime}}</th>
+          </tr> 
         {% endfor %}
-    </ul>
+    </tbody></table>
 
 {% endblock %}
