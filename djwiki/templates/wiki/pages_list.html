@@ -13,8 +13,8 @@
           <tr class="{% cycle 'row1' 'row2' %}">
             <th scope="col"><a href="../{{choice.title}}"> {{ choice.title }}  {{Index}}</a></th>
             <th scope="col">Head rev No: {{choice.head_revision}}</th>
-            <th scope="col">Auth:{{choice.headRevisionContent.author}}</th>
-            <th scope="col">Modificated:{{choice.headRevisionContent.modificationTime}}</th>
+            <th scope="col">Auth: {{choice.headRevisionContent.author}}</th>
+            <th scope="col">Modificated: {{choice.headRevisionContent.modificationTime|date:"jS F Y H:i:s"}}</th>
           </tr> 
         {% endfor %}
     </tbody></table>
