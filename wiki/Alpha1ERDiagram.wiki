@@ -1,7 +1,9 @@
-#summary One-sentence summary of this page.
 
 = Alpha 1 ER Diagram =
 
 [http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png]
+
+http://code.google.com/p/djwiki/downloads/detail?name=alpha1_ER_Diagram.html&can=2&q=
+
 
 = Details =
