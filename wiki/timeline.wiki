@@ -21,6 +21,7 @@ Alpha1 (6.03):
 
 Spec ():
   * Design (ER-diagram)
+  [http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png]
 
 Alpha2 ():
   * xmlrpc (SQL, transactions)
