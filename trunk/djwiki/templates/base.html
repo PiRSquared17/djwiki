@@ -7,25 +7,22 @@
     {% block extrahead %}{% endblock %}
   </head>
 
-<style type="text/css">
-<!-- 	#menu-nav {padding: 5px; border: 1px solid #000; margin-bottom: 25px;height : 25px;}
-  	#menu-nav input {margin-top: 0px;margin-right: 0;padding: 3px 15px;
-		display: inline;float : right;}
---> </style>
-
-  <div id="menu-nav">
-    <input type="button" value="Backward" onclick="history.back()"/>
-    <input type="button" value="Forward" onclick="history.forward()"/>
-    <input type="button" value="Login" onclick="location.href='/wiki'"/>
-    <input type="button" value="Upload" onclick="location.href='/wiki/upload'"/>
-    <input type="button" value="List" onclick="location.href='{% url djwiki.wiki.views.pages_list %}'"/>
-    <input type="button" value="Home" onclick="location.href='/wiki'"/>
-  </div>
-
-
   <body>
+
+      {% spaceless %}
+
+      <img name="btn_backward" src="/static/backward_up.png" alt="backward" onclick="history.back()" onmouseover="document.btn_backward.src='/static/backward_over.png'" onmouseout="document.btn_backward.src='/static/backward_up.png'"/>
+      <img name="btn_forward" src="/static/forward_up.png" alt="forward" onclick="history.forward()" onmouseover="document.btn_forward.src='/static/forward_over.png'" onmouseout="document.btn_forward.src='/static/forward_up.png'"/>
+      <img name="btn_login" src="/static/login_up.png" alt="login" onclick="location.href='/wiki'" onmouseover="document.btn_login.src='/static/login_over.png'" onmouseout="document.btn_login.src='/static/login_up.png'"/>
+      <img name="btn_upload" src="/static/upload_up.png" alt="upload" onclick="location.href='/wiki/upload'" onmouseover="document.btn_upload.src='/static/upload_over.png'" onmouseout="document.btn_upload.src='/static/upload_up.png'"/>
+      <img name="btn_list" src="/static/list_up.png" alt="list" onclick="location.href='/wiki/list/'" onmouseover="document.btn_list.src='/static/list_over.png'" onmouseout="document.btn_list.src='/static/list_up.png'"/>
+      <img name="btn_home" src="/static/home_up.png" alt="home" onclick="location.href='/wiki'" onmouseover="document.btn_home.src='/static/home_over.png'" onmouseout="document.btn_home.src='/static/home_up.png'"/>
+
+      {% endspaceless %}
+
     <div id="content" class="colM">
     <div id="content-main">
+
     {% block content %}{% endblock %}
     </div></div>
   </body>
