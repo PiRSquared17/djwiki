@@ -10,14 +10,14 @@ Links:
   * html-diff [http://web.archive.org/web/20040416194325/http://www.webwareforpython.org/~ianb/w4py.org/Wiki/lib/htmldiff.py python script]
 Alpha1 (6.03):
   * pagelist _*SAN - base functions rev #27*_
-  * nice wiki/list page design
+  * nice wiki/list page design _*Done*_
   * mysql _*ALeRT - done, check [http://code.google.com/p/djwiki/wiki/deployment this] out*_
   * wikimarkup + markdown (or-or) _*ALeRT - done rev #10*_
   * attachments _*SAN rev #40 base functions*_
   * error checking _*Done*_
   * simple concurrent blocking _*ALeRT - done rev #23*_
   * navigation menu base functions _*SAN rev #27 *_
-  * remove css code from templates
+  * remove css code from templates _*Done*_
 
 Spec ():
   * Design (ER-diagram) _* Done [http://code.google.com/p/djwiki/wiki/Alpha1ERDiagram   see here ] *_
