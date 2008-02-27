@@ -20,7 +20,7 @@ Alpha1 (6.03):
   * remove css code from templates
 
 Spec ():
-  * Design (ER-diagram)[http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png      see here]
+  * Design (ER-diagram)[http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png      _*Done*_]
 
 Alpha2 ():
   * xmlrpc (SQL, transactions)
