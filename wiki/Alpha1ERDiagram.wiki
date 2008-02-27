@@ -2,7 +2,7 @@
 
 [http://djwiki.googlecode.com/files/alpha1_ER_Diagram.png]
 
-http://djwiki.googlecode.com/files/alpha1_ER_Diagram.html
+[http://djwiki.googlecode.com/files/alpha1_ER_Diagram.html Entity info]
 
 
 = Details =
