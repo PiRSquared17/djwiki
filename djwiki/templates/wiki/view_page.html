@@ -48,6 +48,12 @@
       head rev
     {% endifnotequal %}
 
+    <h1>Tags</h1> 
+   {{page.tags}}
+
+    <hr/> 
+
+
     <b>&nbsp; Author: </b>{{ page.author }}
     <b>&nbsp; Revision: </b>{{ page.revision }}
     <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}

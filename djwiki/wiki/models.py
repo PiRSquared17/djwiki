@@ -1,4 +1,6 @@
 from django.db import models
+from tagging.models import Tag
+from tagging.fields import TagField
 import datetime
 
 class WikiPageTitle(models.Model):
@@ -21,6 +23,7 @@ class WikiPageContent(models.Model):
   revision = models.IntegerField(default=0)
   modificationTime = models.DateTimeField(auto_now_add=True) 
   markupType = models.CharField(max_length=100)
+  tags = TagField()
   class Meta:
     unique_together = ("title", "revision")
 
