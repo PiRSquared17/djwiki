@@ -32,7 +32,7 @@ Alpha2 (2008-03-13):
   * diff after conflicts
   * revision list (diff of any 2 revisions)
   * file model, bind file to wikiPage
-  * store files in db (in a BlobField)
+  * store files in db (in a !BlobField)
 
 Spec ():
   * Design (ER-diagram)
