@@ -25,7 +25,7 @@ Spec ():
 
 Alpha2 (2008-03-13):
   * xmlrpc (SQL, transactions)
-  * tags _*SAN - something looks like it in #97*_
+  * tags _*SAN - something looks like it in rev #97*_
   * categories (hierarchy)
   * ?comments
   * diff
