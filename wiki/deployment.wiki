@@ -19,10 +19,8 @@
     }}}
   # create tables in mysql db
     {{{manage.py syncdb}}}
-
-    NOTE: Python module MySQLdb should be installed to run this command successfull
-    download it: http://sourceforge.net/project/showfiles.php?group_id=22307
-    
+      NOTE: Python module MySQLdb should be installed to run this command successfull
+      download it: http://sourceforge.net/project/showfiles.php?group_id=22307
   # load data from dump (optional)
     {{{manage.py loaddata wiki.json}}}
   # run the server
