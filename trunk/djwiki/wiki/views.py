@@ -24,6 +24,16 @@ def pages_list(request, page_title='home'):
     {'pages_list' : WikiPageTitle.objects.all(),
      'count' :0,
      'pages_content' : WikiPageContent.objects.all()})
+#----------------------------------------------------------------------------------------------------------
+def tags_list(request, page_title='home'):
+  try:
+    page_list = WikiPageTitle.objects.all();
+  except:
+    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
+  return render_to_response('wiki/tags_list.html', 
+    {'pages_list' : WikiPageTitle.objects.all(),
+     'count' :0,
+     'pages_content' : WikiPageContent.objects.all()})
 
 #----------------------------------------------------------------------------------------------------------
 

@@ -77,4 +77,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'djwiki.wiki',
+    'tagging',
+
 )

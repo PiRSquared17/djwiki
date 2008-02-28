@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
+  (r'^tags/$','djwiki.wiki.views.tags_list'),
   (r'^list/$','djwiki.wiki.views.pages_list'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),
   (r'^upload/successful/$','djwiki.wiki.views.upload_done_page'),
