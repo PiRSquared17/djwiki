@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload complete</h1>
+
+<div style="overflow:auto; height:300px; width:300px">
+  <a href = "/static/{{filename}}"><img src = "/static/{{filename}}" alt = "{{filename}}"/></a>
+</div>
+
+<br/>
+
+Your image has been successfully uploaded!
+<br/>
+<br/>
+<b>markdown link:</b>  <input type="text" align="left" value="{{markdownLink}}" readonly="readonly" size="50"/> 
+<br/>
+<b>mediawiki markup link:</b> <input type="text" align="left" value="{{mediawikiLink}}" readonly="readonly" size="50"/> 
+
+<br/><br/>
+
+<input type="button" align="left" value="next file" onclick="location.href='/wiki/upload/'" class="default"/>   
+<input type="button" align="left" value="OK" onclick="location.href='/wiki/home/'" class="default"/> 
+  
+{% endblock %}
