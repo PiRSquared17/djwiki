@@ -9,7 +9,7 @@ Links:
   * ER-diagram sample [http://www.conceptdraw.com/products/img/ScreenShots/cd5/software/SampleDatabaseLayout.gif image]
   * html-diff [http://web.archive.org/web/20040416194325/http://www.webwareforpython.org/~ianb/w4py.org/Wiki/lib/htmldiff.py python script]
   * [http://code.google.com/p/django-tagging/ django-tagging]
-Alpha1 (6.03): _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
+Alpha1 - completed on 2008-02-28: _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
   * pagelist _*SAN - base functions rev #27*_
   * nice wiki/list page design _*Done*_
   * mysql _*ALeRT - done, check [http://code.google.com/p/djwiki/wiki/deployment this] out*_
@@ -23,13 +23,14 @@ Alpha1 (6.03): _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
 Spec ():
   * Design (ER-diagram) _* Done [http://code.google.com/p/djwiki/wiki/Alpha1ERDiagram   see here ] *_
 
-
-Alpha2 ():
+Alpha2 (2008-03-13):
   * xmlrpc (SQL, transactions)
   * tags
   * categories (hierarchy)
   * ?comments
   * diff
+  * diff after conflicts
+  * revision list (diff of any 2 revisions)
 
 Spec ():
   * Design (ER-diagram)
