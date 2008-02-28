@@ -8,7 +8,7 @@ Links:
   * read about locking [http://groups.google.com/group/django-users/browse_thread/thread/e9db1349014aa1f4/9a697f65a617b5f6?#9a697f65a617b5f6 google groups thread]
   * ER-diagram sample [http://www.conceptdraw.com/products/img/ScreenShots/cd5/software/SampleDatabaseLayout.gif image]
   * html-diff [http://web.archive.org/web/20040416194325/http://www.webwareforpython.org/~ianb/w4py.org/Wiki/lib/htmldiff.py python script]
-Alpha1 (6.03):
+Alpha1 (6.03): _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
   * pagelist _*SAN - base functions rev #27*_
   * nice wiki/list page design _*Done*_
   * mysql _*ALeRT - done, check [http://code.google.com/p/djwiki/wiki/deployment this] out*_
