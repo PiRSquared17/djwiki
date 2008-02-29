@@ -2,7 +2,7 @@
 
 {% load markdown_text %}
 {% load mediawiki_text %}
-
+{% load tagging_tags %}
 
 
 {% block title %}wiki page{% endblock %}
@@ -11,6 +11,15 @@
  
     <h1>{{ page.title }}</h1>
     <hr/> 
+
+    <h2> Tags:
+        {% tags_for_object page as Tags %}
+        {% for tag in Tags %}
+            <a href='/wiki/pagesfortag/?f={{tag}}' style="font-size: 15px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
+        {% endfor %}
+    </h2>  <hr/> 
+   
+
 
     <div class="content">
        {% ifequal page.markupType "markdown" %}
@@ -47,11 +56,6 @@
     {% else %}
       head rev
     {% endifnotequal %}
-
-    <h1>Tags</h1> 
-   {{page.tags}}
-
-    <hr/> 
 
 
     <b>&nbsp; Author: </b>{{ page.author }}

@@ -2,14 +2,23 @@
 
 {% load tagging_tags %}
 
-
 {% block title %}wiki page{% endblock %}
 
+
 {% block content %}
-                      
+
+    
     <hr/><br/>
     <h1>Tags list</h1>
     <br/>
+
+    {% tag_cloud_for_model wiki.WikiPageContent as TagCloud with steps=100 distribution=linear%}
+    {% for tag in TagCloud %}
+        <a href='qqq' style="font-size: {{tag.font_size}}px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
+    {% endfor %}
+
+    {{TagCloud}}
+    {{list}}
 
     {% tags_for_model wiki.WikiPageContent as WikiPageContentTags %}
 
