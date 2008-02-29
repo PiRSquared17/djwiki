@@ -25,8 +25,12 @@ Spec ():
 
 Alpha2 (2008-03-13):
   * xmlrpc (SQL, transactions)
-  * tags _*SAN - something looks like it in rev #97*_
+  * tags 
+      * Tag line in page view  _*rev #100*_
+      * List of pages marked with tag   _*rev #100*_
+      * Simle TagCloud page _*rev #100*_
   * categories (hierarchy)
+     
   * ?comments
   * diff
   * diff after conflicts
