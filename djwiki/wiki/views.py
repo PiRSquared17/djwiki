@@ -3,7 +3,11 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.create_update import *
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from djwiki.wiki.myforms import *
-from djwiki.settings import MEDIA_ROOT  
+from djwiki.settings import MEDIA_ROOT 
+from tagging.views import tagged_object_list
+from tagging.utils import get_tag
+from tagging.utils import calculate_cloud
+
 
 
 def view_page(request, page_title='home'):
@@ -26,6 +30,8 @@ def pages_list(request, page_title='home'):
      'pages_content' : WikiPageContent.objects.all()})
 #----------------------------------------------------------------------------------------------------------
 def tags_list(request, page_title='home'):
+  list = tagged_object_list(request,WikiPageContent,'hi')
+  #cloud = calculate_cloud('hi')
   try:
     page_list = WikiPageTitle.objects.all();
   except:
@@ -33,9 +39,23 @@ def tags_list(request, page_title='home'):
   return render_to_response('wiki/tags_list.html', 
     {'pages_list' : WikiPageTitle.objects.all(),
      'count' :0,
-     'pages_content' : WikiPageContent.objects.all()})
+     'pages_content' : WikiPageContent.objects.all(),
+      'list' : list})
 
 #----------------------------------------------------------------------------------------------------------
+def tagcloud(request):
+  return render_to_response('wiki/tagcloud.html',{}) 
+
+#----------------------------------------------------------------------------------------------------------
+def pagesfortag(request):
+  if 'f' in request.GET:
+    param = request.GET['f']
+    return render_to_response('wiki/pagesfortag.html', 
+           {'tag': param})
+  else:
+    raise Http404
+#----------------------------------------------------------------------------------------------------------
+
 
 
 def view_revision(request, page_title, rev):

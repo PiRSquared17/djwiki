@@ -1,7 +1,13 @@
 from django.conf.urls.defaults import *
+from tagging.views import tagged_object_list
+from wiki.models import WikiPageContent
+
 
 urlpatterns = patterns('',
-  (r'^tags/$','djwiki.wiki.views.tags_list'),
+
+  (r'^tagcloud/$', 'djwiki.wiki.views.tagcloud'),
+  (r'^pagesfortag/$', 'djwiki.wiki.views.pagesfortag'),
+
   (r'^list/$','djwiki.wiki.views.pages_list'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),
   (r'^upload/successful/$','djwiki.wiki.views.upload_done_page'),
