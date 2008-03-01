@@ -7,6 +7,7 @@ urlpatterns = patterns('',
 
   (r'^tagcloud/$', 'djwiki.wiki.views.tagcloud'),
   (r'^pagesfortag/$', 'djwiki.wiki.views.pagesfortag'),
+  (r'^categories/$', 'djwiki.wiki.views.view_category'),
 
   (r'^list/$','djwiki.wiki.views.pages_list'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),

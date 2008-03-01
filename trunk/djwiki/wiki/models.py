@@ -2,6 +2,7 @@ from django.db import models
 from tagging.models import Tag
 from tagging.fields import TagField
 import datetime
+import tagging
 
 class WikiPageTitle(models.Model):
   title = models.CharField(max_length=100, unique=True)
@@ -44,3 +45,16 @@ class WikiPageContent(models.Model):
      return self.revision + 1
    else:
      return self.revision
+
+class WikiCategory(models.Model):
+  title = models.CharField(max_length=100)
+  tags = TagField()
+
+  class Admin:
+    pass
+
+  def __unicode__(self):
+    return self.title      
+  class Meta:
+    unique_together = ("title","title")
+

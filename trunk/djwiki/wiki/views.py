@@ -4,6 +4,7 @@ from django.views.generic.create_update import *
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from djwiki.wiki.myforms import *
 from djwiki.settings import MEDIA_ROOT 
+from tagging.models import Tag
 from tagging.views import tagged_object_list
 from tagging.utils import get_tag
 from tagging.utils import calculate_cloud
@@ -55,9 +56,28 @@ def pagesfortag(request):
   else:
     raise Http404
 #----------------------------------------------------------------------------------------------------------
-
-
-
+def view_category(request):
+  if 'f' in request.GET:
+    param = request.GET['f']
+  else:
+    param = 'Main'
+  category = WikiCategory.objects.get_or_create(title = param)  
+  category = WikiCategory.objects.get(title = param)
+  tag = Tag.objects.get_or_create(name=param)
+  tag = Tag.objects.get(name= param)
+  if request.method == 'GET':
+    editForm = CreateCategoryForm()  
+    return render_to_response('wiki/view_category.html', 
+             {'category': category,'tag' : tag,'form' : editForm})
+  elif request.method == 'POST':
+    editForm = CreateCategoryForm(request.POST.copy())
+    cat = WikiCategory.objects.get_or_create(title = editForm.data['Name'])  
+    cat = WikiCategory.objects.get(title = editForm.data['Name'])
+    Tag.objects.add_tag(cat, param)
+    editForm = CreateCategoryForm()  
+  return render_to_response('wiki/view_category.html', 
+           {'category': category,'tag' : tag,'form' : editForm})
+#----------------------------------------------------------------------------------------------------------
 def view_revision(request, page_title, rev):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)

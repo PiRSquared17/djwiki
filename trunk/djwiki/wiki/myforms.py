@@ -17,3 +17,6 @@ class WikiEditForm(ModelForm):
 
 class UploadForm(Form):
   file = ImageField()
+
+class CreateCategoryForm(Form):
+  Name = CharField(max_length=100)
