@@ -10,6 +10,8 @@ Links:
   * html-diff [http://web.archive.org/web/20040416194325/http://www.webwareforpython.org/~ianb/w4py.org/Wiki/lib/htmldiff.py python script]
   * [http://code.google.com/p/django-tagging/ django-tagging]
   * [http://code.djangoproject.com/wiki/UsingFreeComment django.contrib.freecomments]
+  * [http://blog.buffis.com/?p=49 trouble with blob fields]
+
 Alpha1 - completed on 2008-02-28: _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
   * pagelist _*SAN - base functions rev #27*_
   * nice wiki/list page design _*Done*_
@@ -31,7 +33,6 @@ Alpha2 (2008-03-13):
       * List of pages marked with tag   _*rev #100*_
       * Simle Tag Cloud page _*rev #100*_
   * categories (hierarchy)
-     
   * ?comments
   * diff
   * diff after conflicts
