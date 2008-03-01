@@ -32,7 +32,7 @@ Alpha2 (2008-03-13):
       * Tag line in page view  _*rev #100*_
       * List of pages marked with tag   _*rev #100*_
       * Simle Tag Cloud page _*rev #100*_
-  * categories (hierarchy)
+  * categories (hierarchy) _*rev #105 Categories with no cycles control*_
   * ?comments
   * diff
   * diff after conflicts
