@@ -71,11 +71,19 @@ def view_category(request):
              {'category': category,'tag' : tag,'form' : editForm})
   elif request.method == 'POST':
     editForm = CreateCategoryForm(request.POST.copy())
-    cat = WikiCategory.objects.get_or_create(title = editForm.data['Name'])  
-    cat = WikiCategory.objects.get(title = editForm.data['Name'])
-    Tag.objects.add_tag(cat, param)
-    editForm = CreateCategoryForm()  
-  return render_to_response('wiki/view_category.html', 
+    try:
+      cat = WikiCategory.objects.get(title = editForm.data['Name'])
+      editForm = CreateCategoryForm()  
+      alreadyExistsErrorMsg = [unicode("Category with this name is already exists")]
+      editForm.errors['Name'] = alreadyExistsErrorMsg
+      return render_to_response('wiki/view_category.html', 
+           {'category': category,'tag' : tag,'form' : editForm})
+    except:
+      cat = WikiCategory.objects.create(title = editForm.data['Name'])  
+#      cat = WikiCategory.objects.get(title = editForm.data['Name'])
+      Tag.objects.add_tag(cat, param)
+      print('error');
+      return render_to_response('wiki/view_category.html', 
            {'category': category,'tag' : tag,'form' : editForm})
 #----------------------------------------------------------------------------------------------------------
 def view_revision(request, page_title, rev):
