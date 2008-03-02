@@ -5,6 +5,18 @@
     <title>MyWiki {% block title %}Page{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
     {% block extrahead %}{% endblock %}
+
+    <script type="text/javascript">
+    function toggleBox(szDivID, iState) // 1 visible, 0 hidden
+    {
+      var obj = document.layers ? document.layers[szDivID] :
+      document.getElementById ?  document.getElementById(szDivID).style :
+      document.all[szDivID].style;
+      obj.display = document.layers ? (iState ? "show" : "hide") :
+      (iState ? "inline" : "none");
+    }
+    </script>
+
   </head>
 
   <body>
