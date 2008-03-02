@@ -8,6 +8,7 @@ from tagging.models import Tag
 from tagging.views import tagged_object_list
 from tagging.utils import get_tag
 from tagging.utils import calculate_cloud
+from djwiki.wiki.diff import textDiff
 
 
 
@@ -17,7 +18,13 @@ def view_page(request, page_title='home'):
     page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle})
+  try:
+    old_content = WikiPageContent.objects.get(title=pageTitle, revision=page.revision-1).content
+    diff_content = textDiff(old_content, page.content)
+  except:
+    diff_content = ''
+
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
 
 #----------------------------------------------------------------------------------------------------------
 def pages_list(request, page_title='home'):
@@ -93,7 +100,12 @@ def view_revision(request, page_title, rev):
       return HttpResponseRedirect("/wiki/%s/" % page_title)
     else:
       page = WikiPageContent.objects.get(title=pageTitle, revision=rev)
-      return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle})
+      try:
+        old_content = WikiPageContent.objects.get(title=pageTitle, revision=page.revision-1).content
+        diff_content = textDiff(old_content, page.content)
+      except:
+        diff_content = ''
+      return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
   except:
     return view_page(request, page_title)
 
