@@ -9,6 +9,8 @@
 
 {% block content %}
  
+    <body type="text/javascript" onload="toggleBox('diff page', 0)"/>
+ 
     <h1>{{ page.title }}</h1>
     <hr/> 
 
@@ -18,8 +20,8 @@
             <a href='/wiki/pagesfortag/?f={{tag}}' style="font-size: 15px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
         {% endfor %}
     </h2>  <hr/> 
-   
-
+    
+    <div id="undiff page">
 
     <div class="content">
        {% ifequal page.markupType "markdown" %}
@@ -27,8 +29,26 @@
        {% else %}
          {{ page.content|mediawiki_wikify|safe }}
        {% endifequal %}
+    </div>
 
     </div>
+
+    <div id="diff page">
+    
+    <h3>rev{{page.revision}} diff rev{{page.prev_revision}}</h3>
+     
+    <hr/>
+
+    <div class="content">
+       {% ifequal page.markupType "markdown" %}
+         {{ diff_content|markdown_wikify|safe }}
+       {% else %}
+         {{ diff_content|mediawiki_wikify|safe }}
+       {% endifequal %}
+    </div>
+
+    </div>
+
     
     <hr/><br/>
 
@@ -57,9 +77,14 @@
       head rev
     {% endifnotequal %}
 
-
+    {% ifnotequal page.revision 0 %} 
+    <input type="button" value="show diff" onclick="if(value == 'show diff'){toggleBox('undiff page',0);toggleBox('diff page',1); value='hide diff';}else{toggleBox('undiff page',1);toggleBox('diff page',0); value='show diff'}" class="default"/>
+    {% endifnotequal %}
     <b>&nbsp; Author: </b>{{ page.author }}
     <b>&nbsp; Revision: </b>{{ page.revision }}
     <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
 
 {% endblock %}
+
+
+
