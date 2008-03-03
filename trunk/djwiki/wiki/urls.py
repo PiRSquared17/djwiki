@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from tagging.views import tagged_object_list
 from wiki.models import WikiPageContent
+from django.contrib.comments.models import FreeComment
 
 
 urlpatterns = patterns('',
@@ -8,6 +9,7 @@ urlpatterns = patterns('',
   (r'^tagcloud/$', 'djwiki.wiki.views.tagcloud'),
   (r'^pagesfortag/$', 'djwiki.wiki.views.pagesfortag'),
   (r'^categories/$', 'djwiki.wiki.views.view_category'),
+  (r'^comments/$', include('django.contrib.comments.urls.comments')),
 
   (r'^list/$','djwiki.wiki.views.pages_list'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),

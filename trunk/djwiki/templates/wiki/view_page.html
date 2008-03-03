@@ -3,6 +3,7 @@
 {% load markdown_text %}
 {% load mediawiki_text %}
 {% load tagging_tags %}
+{% load comments %}
 
 
 {% block title %}wiki page{% endblock %}
@@ -77,12 +78,17 @@
       head rev
     {% endifnotequal %}
 
+
     {% ifnotequal page.revision 0 %} 
     <input type="button" value="show diff" onclick="if(value == 'show diff'){toggleBox('undiff page',0);toggleBox('diff page',1); value='hide diff';}else{toggleBox('undiff page',1);toggleBox('diff page',0); value='show diff'}" class="default"/>
     {% endifnotequal %}
     <b>&nbsp; Author: </b>{{ page.author }}
     <b>&nbsp; Revision: </b>{{ page.revision }}
     <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
+
+    <h2>Post a comment</h2>
+    {% free_comment_form for wiki.wikipagecontent page.id %}
+
 
 {% endblock %}
 

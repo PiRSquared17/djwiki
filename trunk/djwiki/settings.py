@@ -78,5 +78,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'djwiki.wiki',
     'tagging',
+    'django.contrib.comments',
 
 )
