@@ -45,6 +45,8 @@ class WikiPageContent(models.Model):
      return self.revision + 1
    else:
      return self.revision
+  def get_absolute_url(self):
+    return ("/wiki/%s/rev/%d/" % (self.title,self.revision))
 
 class WikiCategory(models.Model):
   title = models.CharField(max_length=100)

@@ -69,6 +69,11 @@ ROOT_URLCONF = 'djwiki.urls'
 TEMPLATE_DIRS = (
     'templates/' 
 )
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+     'django.core.context_processors.request',
+) 
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -81,3 +86,7 @@ INSTALLED_APPS = (
     'django.contrib.comments',
 
 )
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+     'django.core.context_processors.request',
+) 
