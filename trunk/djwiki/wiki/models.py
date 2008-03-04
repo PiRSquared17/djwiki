@@ -9,7 +9,7 @@ class WikiPageTitle(models.Model):
   head_revision = models.IntegerField(default=0)
 
   def headRevisionContent(self):
-	return WikiPageContent.objects.get(title=self,revision=self.head_revision)
+        return WikiPageContent.objects.get(title=self,revision=self.head_revision)
 
   class Admin:
     pass
@@ -49,7 +49,7 @@ class WikiPageContent(models.Model):
     return ("/wiki/%s/rev/%d/" % (self.title,self.revision))
 
 class WikiCategory(models.Model):
-  title = models.CharField(max_length=100)
+  title = models.CharField(max_length=100, unique=True)
   tags = TagField()
 
   class Admin:
@@ -57,6 +57,21 @@ class WikiCategory(models.Model):
 
   def __unicode__(self):
     return self.title      
-  class Meta:
-    unique_together = ("title","title")
 
+class UploadedFile(models.Model):
+  name = models.CharField(max_length=100)
+  page = models.ForeignKey(WikiPageTitle)
+  data = models.TextField()
+  type = models.CharField(max_length=100)
+
+  class Admin:
+    pass
+
+  def path(self):
+    return self.page.title + '/' + self.name
+
+  def __unicode__(self):
+    return self.path()      
+
+  class Meta:
+    unique_together = ("name", "page", "type")
