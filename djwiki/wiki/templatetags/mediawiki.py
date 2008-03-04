@@ -911,14 +911,20 @@ def replaceInternalLinks(text):
                                 namespace = u'wiki'
                         namespace = slugify(namespace)
                         if namespace == "image":
-                                sb.append(u'<a href="/image/')
-                                sb.append(slugify(link))
-                                sb.append(u'"><img src="/static/')
+                                sb.append(u'<a href="/wiki/static/image/')
+                                sb.append(link)
+                                sb.append(u'"><img src="/wiki/static/image/')
                                 sb.append(link)
                                 if alt:
                                         sb.append(u'" alt="')
                                         sb.append(alt)
                                 sb.append(u'" /></a>')
+                        if namespace == "file":
+                                sb.append(u'<a href="/wiki/static/file/')
+                                sb.append(link)
+                                sb.append(u'"><b>')
+                                sb.append(link)
+                                sb.append(u'<b/></a>')
                         elif namespace == 'wiki':
                                 sb.append(u'<a href="/')
                                 sb.append(namespace)
