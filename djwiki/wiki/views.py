@@ -27,23 +27,6 @@ def my_post_free_comment(request):
 	
 	return post_free_comment(request)
 
-
-
-def view_page(request, page_title='home'):
-  try:
-    pageTitle = WikiPageTitle.objects.get(title=page_title)
-    page = WikiPageContent.objects.get(title=pageTitle, revision=pageTitle.head_revision)
-  except:
-    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  try:
-    old_content = WikiPageContent.objects.get(title=pageTitle, revision=page.revision-1).content
-    diff_content = textDiff(old_content, page.content)
-  except:
-    diff_content = ''
-
-  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
-
-
 #----------------------------------------------------------------------------------------------------------
 
 def tags_list(request, page_title='home'):
@@ -101,22 +84,27 @@ def view_category(request):
       print('error');
       return render_to_response('wiki/view_category.html', 
            {'category': category,'tag' : tag,'form' : editForm})
+
 #----------------------------------------------------------------------------------------------------------
-def view_revision(request, page_title, rev):
+
+def view_page(request, page_title, rev, is_head):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)
-    if str(pageTitle.head_revision) == rev:
+    if str(pageTitle.head_revision) == rev and not is_head:
       return HttpResponseRedirect("/wiki/%s/" % page_title)
     else:
-      page = WikiPageContent.objects.get(title=pageTitle, revision=rev)
+      if is_head:
+        page = pageTitle.headRevisionContent() 
+      else:
+        page = WikiPageContent.objects.get(title=pageTitle, revision=rev)
       try:
         old_content = WikiPageContent.objects.get(title=pageTitle, revision=page.revision-1).content
         diff_content = textDiff(old_content, page.content)
       except:
         diff_content = ''
-      return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
   except:
-    return view_page(request, page_title)
+    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
 
 #----------------------------------------------------------------------------------------------------------
 

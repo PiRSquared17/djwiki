@@ -16,10 +16,10 @@ urlpatterns += patterns('',
   (r'^categories/$', 'djwiki.wiki.views.view_category'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),
   (r'^upload/successful/$','djwiki.wiki.views.upload_done_page'),
-  (r'^(?P<page_title>[^/]+)/$', 'djwiki.wiki.views.view_page'),
-  (r'^(?P<page_title>[^/]+)/edit/$', 'djwiki.wiki.views.edit_page'),
+  (r'^(?P<page_title>[^/]+)/$', 'djwiki.wiki.views.view_page', {'rev':0,'is_head':True}),
+  (r'^(?P<page_title>[^/]+)/edit/$', 'djwiki.wiki.views.edit_page'),  
   (r'^(?P<page_title>[^/]+)/create/$', 'djwiki.wiki.views.create_page'),
-  (r'^(?P<page_title>[^/]+)/rev/(?P<rev>\d+)/$', 'djwiki.wiki.views.view_revision'),
+  (r'^(?P<page_title>[^/]+)/rev/(?P<rev>\d+)/$', 'djwiki.wiki.views.view_page', {'is_head':False}),
 )
 
 
