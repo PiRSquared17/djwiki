@@ -15,8 +15,15 @@ class WikiEditForm(ModelForm):
   class Meta:
     model = WikiPageContent
 
-class UploadForm(Form):
+class ImageUploadForm(Form):
+  page = ModelChoiceField(queryset=WikiPageTitle.objects.all())
+  contentType = ChoiceField(choices=(('image', 'image'), ('other file', 'other file')))  
   file = ImageField()
+
+class FileUploadForm(Form):
+  page = ModelChoiceField(queryset=WikiPageTitle.objects.all())
+  file = FileField()
+
 
 class CreateCategoryForm(Form):
   Name = CharField(max_length=100)
