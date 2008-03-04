@@ -43,17 +43,9 @@ def view_page(request, page_title='home'):
 
   return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
 
+
 #----------------------------------------------------------------------------------------------------------
-def pages_list(request, page_title='home'):
-  try:
-    page_list = WikiPageTitle.objects.all();
-  except:
-    return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  return render_to_response('wiki/pages_list.html', 
-    {'pages_list' : WikiPageTitle.objects.all(),
-     'count' :0,
-     'pages_content' : WikiPageContent.objects.all()})
-#----------------------------------------------------------------------------------------------------------
+
 def tags_list(request, page_title='home'):
   list = tagged_object_list(request,WikiPageContent,'hi')
   #cloud = calculate_cloud('hi')
