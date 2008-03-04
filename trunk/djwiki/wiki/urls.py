@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 from tagging.views import tagged_object_list
 from wiki.models import WikiPageTitle, WikiPageContent
 from django.contrib.comments.models import FreeComment
+from djwiki import settings
+
 
 urlpatterns = patterns('django.views.generic.simple',
   (r'^list/$','direct_to_template', {'template':'wiki/pages_list.html',
@@ -20,6 +22,8 @@ urlpatterns += patterns('',
   (r'^(?P<page_title>[^/]+)/edit/$', 'djwiki.wiki.views.edit_page'),  
   (r'^(?P<page_title>[^/]+)/create/$', 'djwiki.wiki.views.create_page'),
   (r'^(?P<page_title>[^/]+)/rev/(?P<rev>\d+)/$', 'djwiki.wiki.views.view_page', {'is_head':False}),
+  (r'^static/(?P<type>[^/]*)/(?P<page>[^/]*)/(?P<file>[^/]*)/$', 'djwiki.wiki.views.view_file'),
+  (r'^dynamic/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 )
 
 
