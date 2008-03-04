@@ -9,6 +9,11 @@ from tagging.views import tagged_object_list
 from tagging.utils import get_tag
 from tagging.utils import calculate_cloud
 from djwiki.wiki.diff import textDiff
+from base64 import b64encode, b64decode
+from os import mkdir, remove
+import os.path 
+from djwiki import settings
+
 
 
 from django.contrib.comments.views.comments import post_free_comment
@@ -182,28 +187,76 @@ def edit_page(request, page_title):
 
 def upload_page(request):
   if request.method == 'GET':
-    upForm = UploadForm()
+    upForm = ImageUploadForm()
   elif request.method == 'POST':
-    upForm = UploadForm(request.POST.copy(),request.FILES)
+    if request.POST['contentType'] == 'image':
+      type = 'image'
+      upForm = ImageUploadForm(request.POST.copy(),request.FILES)
+    else:
+      type = 'file'
+      upForm = FileUploadForm(request.POST.copy(),request.FILES)
+ 
     if upForm.is_valid():
+      pageTitle = upForm.cleaned_data['page']
       filename = upForm.cleaned_data['file'].filename
-      server_path = '%s%s' % (MEDIA_ROOT,filename)
-      fd = open(server_path, 'wb')  
-      fd.write(upForm.cleaned_data['file'].content)  
-      fd.close() 
-      return HttpResponseRedirect("/wiki/upload/successful/?f=%s" % filename)
+      file, created = UploadedFile.objects.get_or_create(name=filename, page=pageTitle, type=type)
+      file.data = b64encode(upForm.cleaned_data['file'].content) 
+      file.save()
+
+      abs_path = settings.MEDIA_ROOT + type + '/' + pageTitle.title + '/' + filename
+      if(os.path.exists(abs_path)):
+        os.remove(abs_path)
+
+      return HttpResponseRedirect("/wiki/upload/successful/?p=%s&f=%s&t=%s" % (file.page.title, file.name, file.type))
 
   return render_to_response('wiki/upload_page.html', {'form': upForm})
 
 #------------------------------------------------------------------------
 
 def upload_done_page(request):
-  if 'f' in request.GET:
-    filename = request.GET['f']
-    mediawikiLink = '[[Image:%s|%s]]' % (filename, filename)
-    markdownLink = '![%s](/static/%s "%s")' % (filename, filename, filename)
-    return render_to_response('wiki/upload_successed.html', 
-           {'filename': filename, 'mediawikiLink': mediawikiLink, 'markdownLink' : markdownLink})
-  else:
+  try:
+    if 'p' in request.GET and 'f' in request.GET and 't' in request.GET:
+      pageTitle = WikiPageTitle.objects.get(title=request.GET['p'])
+      file = UploadedFile.objects.get(page=pageTitle, name=request.GET['f'], type=request.GET['t'])
+
+      if file.type == 'image':
+        mediawikiLink = '[[Image:%s|%s]]' % (file.path(), file.name)
+        markdownLink = "![%s](/wiki/static/image/%s %s)" % (file.path(), file.path(), file.name)
+      else:
+        mediawikiLink = '[[File:%s|%s]]' % (file.path(), file.name)
+        markdownLink = "[%s](/wiki/static/file/%s)" % (file.path(), file.path())
+ 
+      return render_to_response('wiki/upload_successed.html', 
+             {'filename': file.path(), 'mediawikiLink': mediawikiLink, 'markdownLink' : markdownLink, 'type':file.type})
+    else:
+      raise Http404
+  except:
     raise Http404
 
+#------------------------------------------------------------------------
+
+def view_file(request, file, page, type):
+  if type == 'image':
+    abs_path = settings.MEDIA_ROOT + 'image/' + page + '/'
+  elif type == 'file':
+    abs_path = settings.MEDIA_ROOT + 'file/' + page + '/'
+  else:  
+    pass
+#    raise Http404
+ 
+  if(not os.path.exists(abs_path)):
+    mkdir(abs_path)
+
+  abs_path += file
+
+  if(not os.path.exists(abs_path)):
+    try:
+      pageTitle = WikiPageTitle.objects.get(title = page)
+      fileObj = UploadedFile.objects.get(name = file, page = pageTitle, type = type)
+      f = open(abs_path, 'wb')
+      f.write(b64decode(fileObj.data))
+      f.close()
+    except:
+      raise Http404
+
+  return HttpResponseRedirect("/wiki/dynamic/" + type + '/' + page + '/' + file)  
