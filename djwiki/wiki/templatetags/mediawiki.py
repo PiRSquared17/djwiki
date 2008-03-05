@@ -8,6 +8,14 @@ code based off of mediawiki
 
 import re, random, math, locale
 from base64 import b64encode, b64decode
+from os.path import normpath, join
+
+def valid_image_path(path):
+  return normpath(join("Q:/image/", path)).startswith(normpath("Q:/image/"))
+
+def valid_file_path(path):
+  return normpath(join("Q:/file/", path)).startswith(normpath("Q:/file/"))
+
 
 mTagHooks = {}
 
@@ -910,7 +918,7 @@ def replaceInternalLinks(text):
                         if not namespace:
                                 namespace = u'wiki'
                         namespace = slugify(namespace)
-                        if namespace == "image":
+                        if namespace == "image" and valid_image_path(link):
                                 sb.append(u'<a href="/wiki/static/image/')
                                 sb.append(link)
                                 sb.append(u'"><img src="/wiki/static/image/')
@@ -919,7 +927,7 @@ def replaceInternalLinks(text):
                                         sb.append(u'" alt="')
                                         sb.append(alt)
                                 sb.append(u'" /></a>')
-                        if namespace == "file":
+                        if namespace == "file" and valid_file_path(link):
                                 sb.append(u'<a href="/wiki/static/file/')
                                 sb.append(link)
                                 sb.append(u'"><b>')
