@@ -6,4 +6,5 @@ urlpatterns = patterns('',
      (r'^wiki/', include('djwiki.wiki.urls')),
      (r'^comments/postfree/', 'views.my_post_free_comment'),
      (r'^comments/', include('django.contrib.comments.urls.comments')),
+     (r'^xmlrpc/$', 'djwiki.wiki.xmlrpc.rpc_handler'),
 )
