@@ -34,11 +34,11 @@ Alpha2 (2008-03-13):
       * Simle Tag Cloud page _*rev #100*_
   * categories (hierarchy) _*rev #107 *_
   * ?comments
-  * diff
-  * diff after conflicts
-  * revision list (diff of any 2 revisions)
+  * diff _*Done*_
+  * diff after conflicts _*Done*_
+  * revision list (diff of any 2 revisions) _*Done*_
   * file model, bind file to wikiPage _*Done*_
-  * store files in db (in a !BlobField) _*Done*_
+  * store files in db (in a base64 text field) _*Done*_
 
 Spec ():
   * Design (ER-diagram)
