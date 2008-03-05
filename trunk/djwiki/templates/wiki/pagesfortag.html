@@ -13,6 +13,10 @@
     <br/>
 
     {% tagged_objects tag in wiki.WikiPageContent as LinkedPages %}
+    {% if LinkedPages %}
+    {% else %}
+        No pages for this tag
+    {% endif %}
     {{LinkedPages.sort}}
     
     <table cellspacing="0">

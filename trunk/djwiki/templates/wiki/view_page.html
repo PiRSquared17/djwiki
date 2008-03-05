@@ -15,11 +15,17 @@
     <h1>{{ page.title }}</h1>
     <hr/> 
 
-    <h2> Tags:
+    <h2>
         {% tags_for_object page as Tags %}
-        {% for tag in Tags %}
-            <a href='/wiki/pagesfortag/?f={{tag}}' style="font-size: 15px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
-        {% endfor %}
+        {% if Tags %}
+            Tags:
+            {% for tag in Tags %}
+                <a href='/wiki/pagesfortag/?f={{tag}}' style="font-size: 15px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
+            {% endfor %}
+        {% else %}
+            No Tags.
+        {% endif %}
+
     </h2>  <hr/> 
     
     <div id="undiff page">
@@ -89,15 +95,19 @@
     
     {% get_free_comment_list for wiki.wikipagecontent page.id as comment_list %}
 	<h2 id="comments">Comments</h2>
-	{% for comment in comment_list %}
-	    <div class="comment_{% cycle odd,even %}" id="c{{ comment.id }}">
-		<span class="comnum">
-		<p><b>{{ comment.person_name|escape }}</b> commented, on {{ comment.submit_date|date:"F j, Y" }} at {{ comment.submit_date|date:"P" }}:</p>
-		{{ comment.comment|escape|urlizetrunc:40|linebreaks }}
-	    </div>
-	{% endfor %}
+        {% if comment_list %}
+            {% for comment in comment_list %}
+	        <div class="comment_{% cycle odd,even %}" id="c{{ comment.id }}">
+	            <span class="comnum">
+		    <p><b>{{ comment.person_name|escape }}</b> commented, on {{ comment.submit_date|date:"F j, Y" }} at {{ comment.submit_date|date:"P" }}:</p>
+		    {{ comment.comment|escape|urlizetrunc:40|linebreaks }}
+	        </div>
+  	    {% endfor %}
+        {% else %}
+	    No comments for this page
+        {% endif %}
 
-    <h2>Post a comment</h2>
+    <h2>Add new comment</h2>
     {% free_comment_form for wiki.wikipagecontent page.id %}
 
 
