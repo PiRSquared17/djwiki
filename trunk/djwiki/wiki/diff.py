@@ -8,12 +8,22 @@ __version__ = '0.22'
 
 import difflib, string
 
+def escape_html(str):
+  res = str.replace("&", "&amp;")
+  res = res.replace("<", "&lt;")
+  res = res.replace(">", "&gt;")
+  res = res.replace("'", "&apos;")
+  res = res.replace('"', "&quot;")
+  res = res.replace("\n", "<br>")
+  return res                                
+
 def isTag(x): return x[0] == "<" and x[-1] == ">"
 
 def textDiff(a, b):
         """Takes in strings a and b and returns a human-readable HTML diff."""
 
         out = []
+        a, b = escape_html(a), escape_html(b)
         a, b = html2list(a), html2list(b)
         s = difflib.SequenceMatcher(None, a, b)
         for e in s.get_opcodes():
