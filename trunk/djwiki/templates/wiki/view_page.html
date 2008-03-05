@@ -47,17 +47,19 @@
     <hr/>
 
     <div class="content">
-       {% ifequal page.markupType "markdown" %}
-         {{ diff_content|markdown_wikify|safe }}
-       {% else %}
-         {{ diff_content|mediawiki_wikify|safe }}
-       {% endifequal %}
+       {{ diff_content|safe }}
     </div>
 
     </div>
 
     
     <hr/><br/>
+
+    <b>Author: </b>{{ page.author }}
+    <b>&nbsp; Revision: </b>{{ page.revision }}
+    <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
+
+    <br/><hr/><br/>
 
     {% ifequal page.revision pageTitle.head_revision %}
       <input type="button" value="edit" onclick="location.href=location.pathname+'edit/'" class="default"/> 
@@ -88,12 +90,15 @@
     {% ifnotequal page.revision 0 %} 
     <input type="button" value="show diff" onclick="if(value == 'show diff'){toggleBox('undiff page',0);toggleBox('diff page',1); value='hide diff';}else{toggleBox('undiff page',1);toggleBox('diff page',0); value='show diff'}" class="default"/>
     {% endifnotequal %}
-    <b>&nbsp; Author: </b>{{ page.author }}
-    <b>&nbsp; Revision: </b>{{ page.revision }}
-    <b>&nbsp; Last Modified: </b>{{ page.modificationTime|date:"jS F Y H:i:s" }}
 
-    
-    {% get_free_comment_list for wiki.wikipagecontent page.id as comment_list %}
+    {% ifequal page.revision pageTitle.head_revision %} 
+      <input type="button" value="all revisions" onclick="location.href=location.pathname+'rev/'" class="default"/>
+    {% else %}
+      <input type="button" value="all revisions" onclick="location.href=location.pathname+'../'" class="default"/>
+    {% endifequal %}
+
+
+      {% get_free_comment_list for wiki.wikipagecontent page.id as comment_list %}
 	<h2 id="comments">Comments</h2>
         {% if comment_list %}
             {% for comment in comment_list %}
