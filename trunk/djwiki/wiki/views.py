@@ -114,6 +114,9 @@ def view_page(request, page_title, rev, is_head):
 #----------------------------------------------------------------------------------------------------------
 
 def create_page(request, page_title):
+  view_conflict = False
+  diff_content = ""
+
   if request.method == 'GET':
     try:
       pageTitle = WikiPageTitle.objects.get(title=page_title)
@@ -127,18 +130,15 @@ def create_page(request, page_title):
 
   elif request.method == 'POST':
 
-    lockErrorMsg = [unicode("Someone has changed this page. Unable to save this version.")]
-    try:
-      pageTitle, created = WikiPageTitle.objects.get_or_create(title = page_title)  
-      if not created:
-        editForm.errors['title'] = lockErrorMsg
-      else:
-        WikiPageContent.objects.get(title = pageTitle, revision = 0)  
-        editForm.errors['title'] = lockErrorMsg
-    except:
-      pass
-
     editForm = WikiEditForm(request.POST.copy())
+    pageTitle, created = WikiPageTitle.objects.get_or_create(title = page_title)  
+    
+    if editForm.data['save_anyway'] == 'true' and not created:
+      pageTitle.head_revision = pageTitle.head_revision + 1
+    elif not created:
+      editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
+      view_conflict = True
+      diff_content = textDiff(pageTitle.headRevisionContent().content, editForm.cleaned_data['content'])
 
     if editForm.is_valid():
       page = editForm.save(commit=False) 
@@ -148,7 +148,9 @@ def create_page(request, page_title):
       page.save()
       return HttpResponseRedirect("/wiki/%s/" % pageTitle.title)
 
-  return render_to_response('wiki/create_page.html', {'form': editForm})
+  return render_to_response('wiki/edit_page.html', {'form': editForm, 'title':'Create a new page', 
+                                                    'view_conflict': view_conflict,
+                                                    'diff_content': diff_content })
 
 
 #----------------------------------------------------------------------------------------------------------
@@ -160,12 +162,20 @@ def edit_page(request, page_title):
   except:
     raise Http404
 
+  view_conflict = False
+  diff_content = ""
+
   if request.method == 'POST':
     editForm = WikiEditForm(request.POST.copy())
     newPage = editForm.save(commit=False)           
-
-    if newPage.revision != pageTitle.head_revision + 1:
-      editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
+    
+    if editForm.data['save_anyway'] == 'true':
+      newPage.revision = pageTitle.head_revision + 1
+    else:
+      if newPage.revision != pageTitle.head_revision + 1:
+        editForm.errors['title'] = [unicode("Someone has changed this page. Unable to save this version.")]
+        view_conflict = True
+        diff_content = textDiff(pageTitle.headRevisionContent().content, newPage.content)
 
     if newPage.content == page.content:
       editForm.errors['content'] = [unicode("nothing changed")]
@@ -181,7 +191,9 @@ def edit_page(request, page_title):
     page.revision = pageTitle.head_revision + 1
     editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title})
 
-  return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page})
+  return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page, 
+                                                    'title': 'Edit page', 'view_conflict': view_conflict,
+                                                    'diff_content': diff_content })
 
 #------------------------------------------------------------------------
 
@@ -260,3 +272,50 @@ def view_file(request, file, page, type):
       raise Http404
 
   return HttpResponseRedirect("/wiki/dynamic/" + type + '/' + page + '/' + file)  
+
+#------------------------------------------------------------------------
+
+def view_revisions(request, page_title):
+#  try:
+  pageTitle = WikiPageTitle.objects.get(title=page_title)
+  revisions = WikiPageContent.objects.filter(title=pageTitle)
+  choices = []
+  for rev in revisions:
+    text = rev.title.title + ' rev ' + str(rev.revision) 
+    choices.append((str(rev.revision), text))
+
+  if request.method == 'GET':
+    form = Form()
+    form.base_fields['Revisions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple())
+
+
+  elif request.method == 'POST':
+    form = Form(request.POST)
+    if form.is_valid():
+      selected = form.cleaned_data['Revisions'] 
+      if len(selected) != 2:
+        form.errors['Revisions'] = [unicode('You must select exactly two revisions for diff')]
+      else:
+        rev1 = selected[0]
+        rev2 = selected[1]
+        response = HttpResponseRedirect("/wiki/%s/diff/?r1=%s&r2=%s" % (page_title, rev1, rev2))
+        return response
+
+  return render_to_response('wiki/rev_list.html', {'list': revisions, 'form': form})
+#  except:
+#    raise Http404
+
+#------------------------------------------------------------------------
+
+def diff_page(request, page_title):
+  try:
+    if 'r1' in request.GET and 'r2' in request.GET:
+      pageTitle = WikiPageTitle.objects.get(title=page_title)
+      rev1 = WikiPageContent.objects.get(title = pageTitle, revision = request.GET['r1'])
+      rev2 = WikiPageContent.objects.get(title = pageTitle, revision = request.GET['r2'])
+      diff_content = textDiff(rev1.content, rev2.content)
+      return render_to_response('wiki/diff_page.html', {'rev1': rev1, 'rev2': rev2, 'diff_content' : diff_content})
+    else:
+      raise Http404
+  except:
+    raise Http404
