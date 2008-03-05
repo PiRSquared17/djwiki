@@ -27,7 +27,7 @@ Spec ():
   * Design (ER-diagram) _* Done [http://code.google.com/p/djwiki/wiki/Alpha1ERDiagram   see here ] *_
 
 Alpha2 (2008-03-13):
-  * xmlrpc (SQL, transactions)
+  * xmlrpc (SQL, transactions) _*Done*_
   * tags 
       * Tag line in page view  _*rev #100*_
       * List of pages marked with tag   _*rev #100*_
