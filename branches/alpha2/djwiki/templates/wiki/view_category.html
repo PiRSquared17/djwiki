@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% load tagging_tags %}
+
+{% block title %}wiki page{% endblock %}
+
+
+{% block content %}
+
+    
+    <hr/><br/>
+    <h1>Category: {{category.title}}</h1>
+    <hr/>
+    <h2>Subcategories: </h2>
+    {% tagged_objects tag in wiki.WikiCategory as LinkedPages%}
+    {{LinkedPages.sort}}
+    {%if LinkedPages%}
+        <table cellspacing="0">
+        <tbody>
+            </tr>
+            {% for CurrentPage in LinkedPages %}
+                <tr class="{% cycle 'row1' 'row2' %}">
+                  <th scope="col"><a href="../../wiki/categories/?f={{CurrentPage.title}}"> {{ CurrentPage.title }}  </a></th>
+                </tr> 
+            {% endfor %}
+        </tbody></table>
+    {%else%}
+        No subcategories here
+    {%endif%}
+
+
+    <br/><hr/>
+    <h2>Pages: </h2>
+    {% tagged_objects tag in wiki.WikiPageContent as LinkedPages%}
+    {{LinkedPages.sort}}
+    {%if LinkedPages%}
+        <table cellspacing="0">
+        <tbody>
+            </tr>
+            {% for CurrentPage in LinkedPages %}
+                <tr class="{% cycle 'row1' 'row2' %}">
+                  <th scope="col"><a href="{{CurrentPage.get_absolute_url}}"> {{ CurrentPage.title }}  </a></th>
+                  <th scope="col">Head rev No: {{CurrentPage.revision}}</th>
+                  <th scope="col">Auth: {{CurrentPage.author}}</th>
+                  <th scope="col">Modificated: {{CurrentPage.modificationTime|date:"jS F Y H:i:s"}}</th>
+                 </tr> 
+            {% endfor %}
+        </tbody></table>
+    {%else%}
+        No pages in this category
+    {%endif%}
+
+
+    <br/><hr/>
+    <h2>Add subcategory</h2>
+    <form method="post" action="">
+        <table>{{ form.as_table }}</table>
+        <input type="submit" value="Add" class="default"/>
+    </form>
+
+
+{% endblock %}

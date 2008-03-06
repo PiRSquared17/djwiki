@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>MyWiki {% block title %}Page{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/media/css/forms.css" />
+    {% block extrahead %}{% endblock %}
+
+    <script type="text/javascript">
+    function toggleBox(szDivID, iState) // 1 visible, 0 hidden
+    {
+      var obj = document.layers ? document.layers[szDivID] :
+      document.getElementById ?  document.getElementById(szDivID).style :
+      document.all[szDivID].style;
+      obj.display = document.layers ? (iState ? "show" : "hide") :
+      (iState ? "inline" : "none");
+    }
+    </script>
+
+  </head>
+
+  <body>
+
+      {% spaceless %}
+
+      <img name="btn_backward" src="/wiki/static/image/home/backward_up.png" alt="backward" onclick="history.back()" onmouseover="document.btn_backward.src='/wiki/static/image/home/backward_over.png'" onmouseout="document.btn_backward.src='/wiki/static/image/home/backward_up.png'"/>
+      <img name="btn_forward" src="/wiki/static/image/home/forward_up.png" alt="forward" onclick="history.forward()" onmouseover="document.btn_forward.src='/wiki/static/image/home/forward_over.png'" onmouseout="document.btn_forward.src='/wiki/static/image/home/forward_up.png'"/>
+      <img name="btn_login" src="/wiki/static/image/home/login_up.png" alt="login" onclick="location.href='/wiki'" onmouseover="document.btn_login.src='/wiki/static/image/home/login_over.png'" onmouseout="document.btn_login.src='/wiki/static/image/home/login_up.png'"/>
+      <img name="btn_upload" src="/wiki/static/image/home/upload_up.png" alt="upload" onclick="location.href='/wiki/upload'" onmouseover="document.btn_upload.src='/wiki/static/image/home/upload_over.png'" onmouseout="document.btn_upload.src='/wiki/static/image/home/upload_up.png'"/>
+      <img name="btn_tags" src="/wiki/static/image/home/tag_cloud_up.png" alt="tags" 
+           onclick="location.href='/wiki/tagcloud/'" 
+           onmouseover="document.btn_tags.src='/wiki/static/image/home/tag_cloud_over.png'"
+           onmouseout="document.btn_tags.src='/wiki/static/image/home/tag_cloud_up.png'"/>
+      <img name="btn_categories" src="/wiki/static/image/home/categories_up.png" alt="categories" 
+           onclick="location.href='/wiki/categories/'" 
+           onmouseover="document.btn_categories.src='/wiki/static/image/home/categories_over.png'"
+           onmouseout="document.btn_categories.src='/wiki/static/image/home/categories_up.png'"/>
+      <img name="btn_list" src="/wiki/static/image/home/list_up.png" alt="list" 
+           onclick="location.href='/wiki/list/'" 
+           onmouseover="document.btn_list.src='/wiki/static/image/home/list_over.png'" 
+           onmouseout="document.btn_list.src='/wiki/static/image/home/list_up.png'"/>
+      <img name="btn_home" src="/wiki/static/image/home/home_up.png" alt="home"
+           onclick="location.href='/wiki'" 
+           onmouseover="document.btn_home.src='/wiki/static/image/home/home_over.png'" 
+           onmouseout="document.btn_home.src='/wiki/static/image/home/home_up.png'"/>
+
+      {% endspaceless %}
+
+    <div id="content" class="colM">
+    <div id="content-main">
+
+    {% block content %}{% endblock %}
+    </div></div>
+  </body>
+</html>
+

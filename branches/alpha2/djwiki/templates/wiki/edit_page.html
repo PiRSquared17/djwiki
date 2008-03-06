@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<form method="post" action="">
+
+{% if view_conflict %} 
+  <div id="diff page">
+    {% if page.title.head_revision%}
+      <h3>yours diff rev{{page.title.head_revision}}</h3>
+    {% else %}    
+      <h3>yours diff rev0</h3>
+    {% endif %}
+    <hr/>
+    <div class="content">
+       {{ diff_content|safe }}
+    </div>
+  </div>
+
+  <input type="submit" value="save anyway" class="default"/>
+  <input type="hidden" name="save_anyway" value="true" class="default"/>
+  <br/><hr/><br/>
+{% else %} 
+  <input type="hidden" name="save_anyway" value="false" class="default"/> 
+{% endif %}
+
+
+  <table>{{ form.as_table }}</table>
+  <input type="button" align="left" value="discard" onclick="location.href='../'"/> 
+  
+  {% if view_conflict %} 
+    <input type="submit" align="left" value="save" disabled="disabled" class="default"/>
+  {% else %} 
+    <input type="submit" align="left" value="save" class="default"/>
+  {% endif %}
+
+</form>
+
+{% endblock %}

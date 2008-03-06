@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load tagging_tags %}
+
+{% block title %}wiki page{% endblock %}
+
+
+{% block content %}
+
+    
+    <hr/><br/>
+    <h1>Tag cloud for our Wiki</h1>
+    <br/>
+
+    {% tag_cloud_for_model wiki.WikiPageContent as TagCloud with steps=40 min_count=0 distribution=linear%}
+    {% if TagCloud%}
+        {% for tag in TagCloud %}
+            <a href='/wiki/pagesfortag/?f={{tag}}' style="font-size: {{tag.font_size}}px; color: #0000FF; text-decoration: underline;">{{tag}}</a>
+        {% endfor %}
+    {%else%}
+        There is no tags in wiki yet
+    {%endif%}
+
+{% endblock %}
