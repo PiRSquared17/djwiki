@@ -11,6 +11,7 @@ Links:
   * [http://code.google.com/p/django-tagging/ django-tagging]
   * [http://code.djangoproject.com/wiki/UsingFreeComment django.contrib.freecomments]
   * [http://blog.buffis.com/?p=49 trouble with blob fields]
+  * [http://www.djangosnippets.org/snippets/240/ something about ssl]
 
 Alpha1 - completed on 2008-02-28: _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
   * pagelist _*SAN - base functions rev #27*_
@@ -44,6 +45,11 @@ Spec ():
   * Design (ER-diagram) _*Done*_
 
 Beta ():
+  * xmlrpc (SQL, transactions) _*Done*_
+    * provide functions to manipulte with wiki-pages, categories and etc.
+    * connect to the DB directly via mod !MySqlDb
   * authorization
   * roles
+    * base privileges
+    * hierarchy
   * ssl
