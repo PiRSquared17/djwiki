@@ -41,7 +41,7 @@ Alpha2 (2008-03-13):
   * store files in db (in a base64 text field) _*Done*_
 
 Spec ():
-  * Design (ER-diagram)
+  * Design (ER-diagram) _*Done*_
 
 Beta ():
   * authorization
