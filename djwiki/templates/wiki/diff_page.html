@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load markdown_text %}
+{% load mediawiki_text %}
+
+
+{% block title %}wiki page{% endblock %}
+
+{% block content %}
+ 
+    <h1>{{ rev1.title }}</h1>
+    <hr/> 
+
+    <div id="diff page">
+    
+    <h3>rev{{rev1.revision}} diff rev{{rev2.revision}}</h3>
+     
+    <hr/>
+
+    <div class="content">
+       {{ diff_content|safe }}
+    </div>
+
+    </div>
+
+    
+    <hr/><br/>
+
+   <input type="button" value="back" onclick="history.back()"/>
+
+{% endblock %}
+
+
+

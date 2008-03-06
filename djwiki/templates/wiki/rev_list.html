@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}wiki page{% endblock %}
+
+{% block content %}
+                      
+    <hr/><br/>
+    <h1>{{title}}</h1>
+    <br/>
+
+    <form method="post" action="">
+      <table>{{ form.as_table }}</table>
+      <input type="submit" align="left" value="view diff" class="default"/>
+      <input type="button" align="left" value="cancel" onclick="location.href='../'"/> 
+    </form> 
+
+{% endblock %}
