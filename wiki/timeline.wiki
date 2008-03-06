@@ -33,7 +33,7 @@ Alpha2 (2008-03-13):
       * List of pages marked with tag   _*rev #100*_
       * Simle Tag Cloud page _*rev #100*_
   * categories (hierarchy) _*rev #107 *_
-  * ?comments
+  * comments _*Done*_
   * diff _*Done*_
   * diff after conflicts _*Done*_
   * revision list (diff of any 2 revisions) _*Done*_
