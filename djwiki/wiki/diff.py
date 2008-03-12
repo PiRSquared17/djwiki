@@ -9,12 +9,12 @@ __version__ = '0.22'
 import difflib, string
 
 def escape_html(str):
-  res = str.replace("&", "&amp;")
-  res = res.replace("<", "&lt;")
-  res = res.replace(">", "&gt;")
-  res = res.replace("'", "&apos;")
-  res = res.replace('"', "&quot;")
-  res = res.replace("\n", "<br>")
+  res = str.replace("&", " &amp; ")
+  res = res.replace("<", " &lt; ")
+  res = res.replace(">", " &gt; ")
+  res = res.replace("'", " &apos; ")
+  res = res.replace('"', " &quot; ")
+  res = res.replace("\n", " <br> ")
   return res                                
 
 def isTag(x): return x[0] == "<" and x[-1] == ">"
