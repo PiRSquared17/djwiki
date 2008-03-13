@@ -10,12 +10,21 @@
 
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 from django.http import HttpResponse
-from django.db import connection, transaction
+import MySQLdb
+import datetime
+
 
 # Create a Dispatcher; this handles the calls and translates info to function maps
-#dispatcher = SimpleXMLRPCDispatcher() # Python 2.4
 dispatcher = SimpleXMLRPCDispatcher(allow_none=False, encoding=None) # Python 2.5
 
+try:
+  myConnection = MySQLdb.connect(host = "localhost",
+                                 port = int("3306"),
+                                 user = "root",
+                                 passwd = "qqq",
+                                 db = "djwiki")
+except MySQLdb.Error, e:
+  myConnection = None
  
 
 def rpc_handler(request):
@@ -54,13 +63,106 @@ def rpc_handler(request):
         return response
 
 
-@transaction.commit_manually
-def execsql(list):
-  cursor = connection.cursor()
-  for str in list:
-    cursor.execute(str)
-  transaction.commit()
+def update_page(title, content, author, markupType):
+  if myConnection == None:
+    return "error: no connection with db server"
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT id, title, head_revision FROM wiki_wikipagetitle WHERE title = '%s'" % title)
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such page"
+  title_id = row[0]
+  head_rev = row[2]
+  cursor.execute("SELECT id, title_id, content, author, revision, modificationTime, markupType, tags FROM wiki_wikipagecontent WHERE (title_id = %s)and(revision = %s)" % (title_id, head_rev))
+  row = cursor.fetchone()
+  if row == None:
+    return "error"
+  old_id = row[0]
+  new_rev = str(int(row[4]) + 1)
+  tags = row[7]
+
+  cursor.execute("UPDATE wiki_wikipagetitle SET head_revision = %s WHERE id = %s" % (new_rev, title_id))
+  cursor.execute("""INSERT INTO wiki_wikipagecontent (title_id, content, author, revision, modificationTime, markupType, tags)
+                    VALUES(%s, '%s', '%s', %s, '%s', '%s', '%s')  
+                 """ %(title_id, content, author, new_rev, MySQLdb.times.format_TIMESTAMP(datetime.datetime.now()), markupType, tags))
+
+  newcont_id = myConnection.insert_id()
+  cursor.execute("SELECT tag_id FROM tagging_taggeditem WHERE (content_type_id = 12) and (object_id = %s)" % old_id)  
+  rows = cursor.fetchall()
+
+  for row in rows:
+    tag_id = row[0]
+    print "tag_id = %s" % tag_id
+    cursor.execute("""INSERT INTO tagging_taggeditem (tag_id, content_type_id, object_id) 
+                      VALUES (%s, 12, %s)""" % (tag_id, newcont_id))    
+  cursor.close()
+  myConnection.commit()
   return ""
 
-                                                
-dispatcher.register_function(execsql, 'execsql')
+def create_page(title, content, author, markupType):
+  if myConnection == None:
+    return "error: no connection with db server"
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT id, title, head_revision FROM wiki_wikipagetitle WHERE title = '%s'" % title)
+  row = cursor.fetchone()
+  if row != None:
+    return "error: page already exists"
+  cursor.execute("""INSERT INTO wiki_wikipagetitle (title, head_revision) 
+                    VALUES ('%s', 0)""" % title)    
+
+  title_id = myConnection.insert_id()
+
+  cursor.execute("""INSERT INTO wiki_wikipagecontent (title_id, content, author, revision, modificationTime, markupType, tags)
+                    VALUES(%s, '%s', '%s', 0, '%s', '%s', '')  
+                 """ %(title_id, content, author, MySQLdb.times.format_TIMESTAMP(datetime.datetime.now()), markupType))
+
+  cursor.close()
+  myConnection.commit()
+  return ""
+
+def get_page_list():
+  if myConnection == None:
+    return "error: no connection with db server"
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT * FROM wiki_wikipagetitle")
+  rows = cursor.fetchall()
+  cursor.close()
+  return rows
+
+def get_page(title):
+  if myConnection == None:
+    return "error: no connection with db server"
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT id, head_revision FROM wiki_wikipagetitle WHERE title = '%s'" % title)
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such page"
+  title_id = row[0]
+  head_rev = row[1]
+  cursor.execute("SELECT * FROM wiki_wikipagecontent WHERE (title_id = %s) and (revision = %s)" % (title_id, head_rev))
+  row = cursor.fetchone()
+  cursor.close()
+  return row
+
+def get_revision(title, rev):
+  if myConnection == None:
+    return "error: no connection with db server"
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT id FROM wiki_wikipagetitle WHERE title = '%s'" % title)
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such page"
+  title_id = row[0]
+  cursor.execute("SELECT * FROM wiki_wikipagecontent WHERE (title_id = %s) and (revision = %s)" % (title_id, rev))
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such revision"
+  cursor.close()
+  return row
+
+ 
+dispatcher.register_function(update_page, 'update_page')
+dispatcher.register_function(create_page, 'create_page')
+dispatcher.register_function(get_page_list, 'get_page_list')
+dispatcher.register_function(get_page, 'get_page')
+dispatcher.register_function(get_revision, 'get_revision')
