@@ -9,7 +9,8 @@
 {% block title %}wiki page{% endblock %}
 
 {% block content %}
- 
+    You is now logged as {{ user }} 
+
     <body type="text/javascript" onload="toggleBox('diff page', 0)"/>
  
     <h1>{{ page.title }}</h1>
@@ -114,7 +115,6 @@
 
     <h2>Add new comment</h2>
     {% free_comment_form for wiki.wikipagecontent page.id %}
-
 
 {% endblock %}
 

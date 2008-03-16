@@ -13,7 +13,8 @@ from base64 import b64encode, b64decode
 from os import mkdir, remove
 import os.path 
 from djwiki import settings
-
+from django.contrib.auth.decorators import login_required
+from django import template
 
 
 from django.contrib.comments.views.comments import post_free_comment
@@ -33,7 +34,6 @@ def my_post_free_comment(request):
 	return post_free_comment(request)
 
 #----------------------------------------------------------------------------------------------------------
-
 def tags_list(request, page_title='home'):
   list = tagged_object_list(request,WikiPageContent,'hi')
   #cloud = calculate_cloud('hi')
@@ -45,18 +45,21 @@ def tags_list(request, page_title='home'):
     {'pages_list' : WikiPageTitle.objects.all(),
      'count' :0,
      'pages_content' : WikiPageContent.objects.all(),
-      'list' : list})
+      'list' : list},
+	context_instance=template.RequestContext(request))
 
 #----------------------------------------------------------------------------------------------------------
 def tagcloud(request):
-  return render_to_response('wiki/tagcloud.html',{}) 
+  return render_to_response('wiki/tagcloud.html',{},
+			context_instance=template.RequestContext(request)) 
 
 #----------------------------------------------------------------------------------------------------------
 def pagesfortag(request):
   if 'f' in request.GET:
     param = request.GET['f']
     return render_to_response('wiki/pagesfortag.html', 
-           {'tag': param})
+           {'tag': param},
+	context_instance=template.RequestContext(request))
   else:
     raise Http404
 #----------------------------------------------------------------------------------------------------------
@@ -72,7 +75,8 @@ def view_category(request):
   if request.method == 'GET':
     editForm = CreateCategoryForm()  
     return render_to_response('wiki/view_category.html', 
-             {'category': category,'tag' : tag,'form' : editForm})
+             {'category': category,'tag' : tag,'form' : editForm},
+		context_instance=template.RequestContext(request))
   elif request.method == 'POST':
     editForm = CreateCategoryForm(request.POST.copy())
     try:
@@ -81,17 +85,18 @@ def view_category(request):
       alreadyExistsErrorMsg = [unicode("Category with this name is already exists")]
       editForm.errors['Name'] = alreadyExistsErrorMsg
       return render_to_response('wiki/view_category.html', 
-           {'category': category,'tag' : tag,'form' : editForm})
+           {'category': category,'tag' : tag,'form' : editForm},
+		context_instance=template.RequestContext(request))
     except:
       cat = WikiCategory.objects.create(title = editForm.data['Name'])  
 #      cat = WikiCategory.objects.get(title = editForm.data['Name'])
       Tag.objects.add_tag(cat, param)
       print('error');
       return render_to_response('wiki/view_category.html', 
-           {'category': category,'tag' : tag,'form' : editForm})
+           {'category': category,'tag' : tag,'form' : editForm},
+	   context_instance=template.RequestContext(request))
 
 #----------------------------------------------------------------------------------------------------------
-
 def view_page(request, page_title, rev, is_head):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)
@@ -109,10 +114,11 @@ def view_page(request, page_title, rev, is_head):
         diff_content = ''
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
-  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content})
+  return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content,
+						   'user':request.user},
+			context_instance=template.RequestContext(request))
 
 #----------------------------------------------------------------------------------------------------------
-
 def create_page(request, page_title):
   view_conflict = False
   diff_content = ""
@@ -150,11 +156,11 @@ def create_page(request, page_title):
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'title':'Create a new page', 
                                                     'view_conflict': view_conflict,
-                                                    'diff_content': diff_content })
+                                                    'diff_content': diff_content },
+					context_instance=template.RequestContext(request))
 
 
 #----------------------------------------------------------------------------------------------------------
-
 def edit_page(request, page_title):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)
@@ -193,10 +199,10 @@ def edit_page(request, page_title):
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page, 
                                                     'title': 'Edit page', 'view_conflict': view_conflict,
-                                                    'diff_content': diff_content })
+                                                    'diff_content': diff_content },
+					context_instance=template.RequestContext(request))
 
 #------------------------------------------------------------------------
-
 def upload_page(request):
   if request.method == 'GET':
     upForm = ImageUploadForm()
@@ -221,10 +227,10 @@ def upload_page(request):
 
       return HttpResponseRedirect("/wiki/upload/successful/?p=%s&f=%s&t=%s" % (file.page.title, file.name, file.type))
 
-  return render_to_response('wiki/upload_page.html', {'form': upForm})
+  return render_to_response('wiki/upload_page.html', {'form': upForm},
+			context_instance=template.RequestContext(request))
 
 #------------------------------------------------------------------------
-
 def upload_done_page(request):
   try:
     if 'p' in request.GET and 'f' in request.GET and 't' in request.GET:
@@ -239,14 +245,14 @@ def upload_done_page(request):
         markdownLink = "[%s](/wiki/static/file/%s)" % (file.path(), file.path())
  
       return render_to_response('wiki/upload_successed.html', 
-             {'filename': file.path(), 'mediawikiLink': mediawikiLink, 'markdownLink' : markdownLink, 'type':file.type})
+             {'filename': file.path(), 'mediawikiLink': mediawikiLink, 'markdownLink' : markdownLink, 'type':file.type},
+					context_instance=template.RequestContext(request))
     else:
       raise Http404
   except:
     raise Http404
 
 #------------------------------------------------------------------------
-
 def view_file(request, file, page, type):
   if type == 'image':
     abs_path = settings.MEDIA_ROOT + 'image/' + page + '/'
@@ -274,7 +280,6 @@ def view_file(request, file, page, type):
   return HttpResponseRedirect("/wiki/dynamic/" + type + '/' + page + '/' + file)  
 
 #------------------------------------------------------------------------
-
 def view_revisions(request, page_title):
 #  try:
   pageTitle = WikiPageTitle.objects.get(title=page_title)
@@ -301,7 +306,8 @@ def view_revisions(request, page_title):
         response = HttpResponseRedirect("/wiki/%s/diff/?r1=%s&r2=%s" % (page_title, rev1, rev2))
         return response
 
-  return render_to_response('wiki/rev_list.html', {'list': revisions, 'form': form})
+  return render_to_response('wiki/rev_list.html', {'list': revisions, 'form': form},
+			context_instance=template.RequestContext(request))
 #  except:
 #    raise Http404
 
@@ -314,7 +320,8 @@ def diff_page(request, page_title):
       rev1 = WikiPageContent.objects.get(title = pageTitle, revision = request.GET['r1'])
       rev2 = WikiPageContent.objects.get(title = pageTitle, revision = request.GET['r2'])
       diff_content = textDiff(rev1.content, rev2.content)
-      return render_to_response('wiki/diff_page.html', {'rev1': rev1, 'rev2': rev2, 'diff_content' : diff_content})
+      return render_to_response('wiki/diff_page.html', {'rev1': rev1, 'rev2': rev2, 'diff_content' : diff_content},
+					context_instance=template.RequestContext(request))
     else:
       raise Http404
   except:
