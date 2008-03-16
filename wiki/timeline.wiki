@@ -12,6 +12,7 @@ Links:
   * [http://code.djangoproject.com/wiki/UsingFreeComment django.contrib.freecomments]
   * [http://blog.buffis.com/?p=49 trouble with blob fields]
   * [http://www.djangosnippets.org/snippets/240/ something about ssl]
+  * [http://www.djangoproject.com/documentation/authentication/ Django authorization]
 
 Alpha1 - completed on 2008-02-28: _* branch https://djwiki.googlecode.com/svn/branches/alpha1 *_
   * pagelist _*SAN - base functions rev #27*_
