@@ -25,7 +25,15 @@
 
       <img name="btn_backward" src="/wiki/static/image/home/backward_up.png" alt="backward" onclick="history.back()" onmouseover="document.btn_backward.src='/wiki/static/image/home/backward_over.png'" onmouseout="document.btn_backward.src='/wiki/static/image/home/backward_up.png'"/>
       <img name="btn_forward" src="/wiki/static/image/home/forward_up.png" alt="forward" onclick="history.forward()" onmouseover="document.btn_forward.src='/wiki/static/image/home/forward_over.png'" onmouseout="document.btn_forward.src='/wiki/static/image/home/forward_up.png'"/>
-      <img name="btn_login" src="/wiki/static/image/home/login_up.png" alt="login" onclick="location.href='/wiki'" onmouseover="document.btn_login.src='/wiki/static/image/home/login_over.png'" onmouseout="document.btn_login.src='/wiki/static/image/home/login_up.png'"/>
+      <img name="btn_login" src="/wiki/static/image/home/login_up.png" 
+           alt="login" onclick="location.href='/accounts/login/?next=/wiki/home/'" 
+           onmouseover="document.btn_login.src='/wiki/static/image/home/login_over.png'"
+           onmouseout="document.btn_login.src='/wiki/static/image/home/login_up.png'"/>
+      <img name="btn_logout" src="/wiki/static/image/home/logout_up.png" 
+           alt="login" onclick="location.href='/accounts/logout/?next=/wiki/home/'" 
+           onmouseover="document.btn_logout.src='/wiki/static/image/home/logout_over.png'"
+           onmouseout="document.btn_logout.src='/wiki/static/image/home/logout_up.png'"/>
+
       <img name="btn_upload" src="/wiki/static/image/home/upload_up.png" alt="upload" onclick="location.href='/wiki/upload'" onmouseover="document.btn_upload.src='/wiki/static/image/home/upload_over.png'" onmouseout="document.btn_upload.src='/wiki/static/image/home/upload_up.png'"/>
       <img name="btn_tags" src="/wiki/static/image/home/tag_cloud_up.png" alt="tags" 
            onclick="location.href='/wiki/tagcloud/'" 
@@ -45,6 +53,18 @@
            onmouseout="document.btn_home.src='/wiki/static/image/home/home_up.png'"/>
 
       {% endspaceless %}
+
+      <br/> 
+      Welcome <strong>
+      {% if user.first_name %}
+          {{ user.first_name|escape }}
+      {% else %} {% if user.username%}
+          {{ user.username }}
+      {% else %}
+          Anonymous
+      {% endif %}  {% endif %}  </strong>
+    <hr/> 
+
 
     <div id="content" class="colM">
     <div id="content-main">
