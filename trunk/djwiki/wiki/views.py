@@ -103,10 +103,10 @@ def view_category(request):
 #----------------------------------------------------------------------------------------------------------
 def register_user(request):
   if request.method == 'GET':
-    if request.user is None:
+    if request.user is None or request.user.username=="":
       regForm = UserRegistrationForm()  
       register = "1"
-    else:   
+    else:
       regForm = UserParamForm(initial={'username': request.user, 
 	'pass1':"bad_pass", 'pass2':"bad_pass", 'firstName':request.user.first_name,
         'secondName':request.user.last_name, 'email':request.user.email})  
