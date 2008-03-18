@@ -63,9 +63,11 @@
           {% endif %}
 	  {% if user.username%}
               ({{ user.username }})
+	  <A HREF="/wiki/register">Edit profile</A>
           {% endif %}
       {% else %} {% if user.username%}
           {{ user.username }}
+	  <A HREF="/wiki/register">Edit profile</A>
       {% else %}
           Anonymous.</strong> You may <A HREF="/wiki/register">register</A>
       {% endif %}  {% endif %} 

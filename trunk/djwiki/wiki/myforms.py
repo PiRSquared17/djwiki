@@ -43,3 +43,11 @@ class UserRegistrationForm(Form):
     pass1 = CharField(widget = PasswordInput)
     pass2 = CharField(widget = PasswordInput)
 
+class UserParamForm(Form):
+    username =  CharField(required=True,widget=ReadOnlyText())
+    firstName = CharField(required=False) 
+    secondName = CharField(required=False)
+    email = CharField(required=True)
+    pass1 = CharField(widget = PasswordInput)
+    pass2 = CharField(widget = PasswordInput)
+

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Registration page</h1>
+<h1>{% if register %} Registration page {% else %} Edit user profile  {% endif%}</h1>
 
 <form enctype="multipart/form-data" method="post" action="">
   <table>{{ form.as_table }}</table>
   
-  <input type="submit" align="left" value="Login" class="default"/>
+  <input type="submit" align="left" value="{% if register %} Register {% else %} Save {% endif%}" class="default"/>
   <input type="button" align="left" value="Cancel" onclick="location.href='/wiki/home/'"/> 
 </form>
   
