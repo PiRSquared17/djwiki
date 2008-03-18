@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+ 	
+{% block title %}{{ title }}{% endblock %}
+ 	
+{% block content %}
+ 	<h1>{{ title }}</h1>
+ 	
+ 	<p>You have been successfully logged out.</p>
+<form name="myForm">
+  <input type="button"  value="OK" name="myButton" onClick="location.href='/wiki/home/'" />
+  <input type="button"  value="Login" name="myButton" onClick="location.href='/accounts/login/?next=/wiki/home/'" />
+</form>
+
+
+{% endblock %}
