@@ -1,5 +1,6 @@
 from djwiki.wiki.models import *
 from django.newforms import *
+from django.contrib.auth.models import User
 
 class ReadOnlyText(TextInput):
   def __init__(self, *args, **kwargs):
@@ -27,3 +28,7 @@ class FileUploadForm(Form):
 
 class CreateCategoryForm(Form):
   Name = CharField(max_length=100)
+
+class UserAttributesForm(ModelForm):
+  class Meta:
+    model = User

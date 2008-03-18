@@ -96,6 +96,19 @@ def view_category(request):
            {'category': category,'tag' : tag,'form' : editForm},
            context_instance=template.RequestContext(request))
 
+
+#----------------------------------------------------------------------------------------------------------
+def user_attributes(request):
+  if request.method == 'GET':
+    editForm = UserAttributesForm()  
+    return render_to_response('wiki/user_attributes.html', 
+             {  'form' : editForm},
+		context_instance=template.RequestContext(request))
+  elif request.method == 'POST':
+    editForm = UserAttributesForm(request.POST.copy())
+    return render_to_response('wiki/user_attributes.html', 
+           {'form' : editForm},
+	   context_instance=template.RequestContext(request))
 #----------------------------------------------------------------------------------------------------------
 def view_page(request, page_title, rev, is_head):
   try:
