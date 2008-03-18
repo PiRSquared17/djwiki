@@ -14,7 +14,7 @@ urlpatterns = patterns('django.views.generic.simple',
 
 urlpatterns += patterns('',
   (r'^tagcloud/$', 'djwiki.wiki.views.tagcloud'),
-  (r'^attr/$', 'djwiki.wiki.views.user_attributes'),
+  (r'^register/$', 'djwiki.wiki.views.register_user'),
   (r'^pagesfortag/$', 'djwiki.wiki.views.pagesfortag'),
   (r'^categories/$', 'djwiki.wiki.views.view_category'),
   (r'^upload/$','djwiki.wiki.views.upload_page'),

@@ -1,6 +1,11 @@
 from djwiki.wiki.models import *
 from django.newforms import *
 from django.contrib.auth.models import User
+from django.core import validators
+from django import oldforms
+from django.utils.translation import ugettext as _
+
+
 
 class ReadOnlyText(TextInput):
   def __init__(self, *args, **kwargs):
@@ -29,6 +34,12 @@ class FileUploadForm(Form):
 class CreateCategoryForm(Form):
   Name = CharField(max_length=100)
 
-class UserAttributesForm(ModelForm):
-  class Meta:
-    model = User
+
+class UserRegistrationForm(Form):
+    username =  CharField(required=True)
+    firstName = CharField(required=False) 
+    secondName = CharField(required=False)
+    email = CharField(required=True)
+    pass1 = CharField(widget = PasswordInput)
+    pass2 = CharField(widget = PasswordInput)
+

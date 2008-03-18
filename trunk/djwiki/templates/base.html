@@ -58,11 +58,17 @@
       Welcome <strong>
       {% if user.first_name %}
           {{ user.first_name|escape }}
+          {% if user.last_name %}
+              {{ user.last_name|escape }} 
+          {% endif %}
+	  {% if user.username%}
+              ({{ user.username }})
+          {% endif %}
       {% else %} {% if user.username%}
           {{ user.username }}
       {% else %}
-          Anonymous
-      {% endif %}  {% endif %}  </strong>
+          Anonymous.</strong> You may <A HREF="/wiki/register">register</A>
+      {% endif %}  {% endif %} 
     <hr/> 
 
 

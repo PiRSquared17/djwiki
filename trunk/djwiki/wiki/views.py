@@ -15,6 +15,9 @@ import os.path
 from djwiki import settings
 from django.contrib.auth.decorators import login_required
 from django import template
+from django.contrib.auth import authenticate, login
+
+
 
 
 from django.contrib.comments.views.comments import post_free_comment
@@ -98,17 +101,46 @@ def view_category(request):
 
 
 #----------------------------------------------------------------------------------------------------------
-def user_attributes(request):
+def register_user(request):
   if request.method == 'GET':
-    editForm = UserAttributesForm()  
-    return render_to_response('wiki/user_attributes.html', 
+    editForm = UserRegistrationForm()  
+    return render_to_response('registration/register.html', 
              {  'form' : editForm},
 		context_instance=template.RequestContext(request))
   elif request.method == 'POST':
-    editForm = UserAttributesForm(request.POST.copy())
-    return render_to_response('wiki/user_attributes.html', 
-           {'form' : editForm},
+    regForm = UserRegistrationForm(request.POST.copy())
+    name = regForm.data['username'];
+    usermail = regForm.data['email'];
+    pass1 = regForm.data['pass1'];
+    pass2 = regForm.data['pass2'];
+    firstName = regForm.data['firstName']
+    secondName = regForm.data['secondName']
+    print(firstName)
+    try:
+      user = User.objects.get(username=name);
+      regForm.errors['username'] = [unicode("User with this name already exists")]
+    except:
+      user = None
+    if usermail=='' or pass1 == '':
+        return render_to_response('registration/register.html', 
+           {'form' : regForm},
 	   context_instance=template.RequestContext(request))
+    if pass1==pass2 and user is None:
+            user = User.objects.create_user(name,usermail,pass1)
+	    user.first_name = firstName
+	    user.last_name = secondName
+	    user.save()
+            user = authenticate(username=name, password=pass1)
+            if user.is_active:
+                login(request, user)
+            return HttpResponseRedirect('/wiki/home')
+    else:
+	regForm.errors['pass2'] = [unicode("Passwords doesn't match each other")]
+        return render_to_response('registration/register.html', 
+           {'form' : regForm},
+	   context_instance=template.RequestContext(request))
+
+    
 #----------------------------------------------------------------------------------------------------------
 def view_page(request, page_title, rev, is_head):
   try:
