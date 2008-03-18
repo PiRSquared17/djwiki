@@ -12,20 +12,24 @@ from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 from django.http import HttpResponse
 import MySQLdb
 import datetime
+from djwiki import settings
 
 
 # Create a Dispatcher; this handles the calls and translates info to function maps
 dispatcher = SimpleXMLRPCDispatcher(allow_none=False, encoding=None) # Python 2.5
 
+#----------------------------------------------------------------------------------------------------------
+
 try:
-  myConnection = MySQLdb.connect(host = "localhost",
-                                 port = int("3306"),
-                                 user = "root",
-                                 passwd = "qqq",
-                                 db = "djwiki")
+  myConnection = MySQLdb.connect(host = settings.DATABASE_HOST,
+                                 port = int(settings.DATABASE_PORT),
+                                 user = settings.DATABASE_USER,
+                                 passwd = settings.DATABASE_PASSWORD,
+                                 db = settings.DATABASE_NAME)
 except MySQLdb.Error, e:
   myConnection = None
- 
+
+#----------------------------------------------------------------------------------------------------------
 
 def rpc_handler(request):
         """
@@ -62,10 +66,43 @@ def rpc_handler(request):
         response['Content-length'] = str(len(response.content))
         return response
 
+#----------------------------------------------------------------------------------------------------------
 
-def update_page(title, content, author, markupType):
+def insert_tags(modelName, obj_id, tags_str):
+  cursor = myConnection.cursor()
+
+  cursor.execute("SELECT id FROM django_content_type WHERE (model = '%s')" % modelName)    
+  row = cursor.fetchone()
+  if row == None:
+    cursor.close()
+    return False
+  content_type = row[0]
+
+  tag_ids = []
+  for tag in tags_str.split(" "):
+    cursor.execute("SELECT id FROM tagging_tag WHERE name = '%s'" % tag)    
+    row = cursor.fetchone()
+    if row == None:
+      cursor.execute("INSERT INTO tagging_tag (name) VALUES('%s')" % tag)    
+      tag_ids.append(str(myConnection.insert_id()))
+    else:
+      tag_ids.append(str(row[0]))
+
+  for tag_id in tag_ids:
+    cursor.execute("""INSERT INTO tagging_taggeditem (tag_id, content_type_id, object_id) 
+                      VALUES (%s, %s, %s)""" % (tag_id, content_type, obj_id))    
+
+  cursor.close()
+  return True
+
+#----------------------------------------------------------------------------------------------------------
+
+def update_page(title, content, author, markupType, tags_str):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
   if myConnection == None:
     return "error: no connection with db server"
+
   cursor = myConnection.cursor()
   cursor.execute("SELECT id, title, head_revision FROM wiki_wikipagetitle WHERE title = '%s'" % title)
   row = cursor.fetchone()
@@ -73,33 +110,26 @@ def update_page(title, content, author, markupType):
     return "error: no such page"
   title_id = row[0]
   head_rev = row[2]
-  cursor.execute("SELECT id, title_id, content, author, revision, modificationTime, markupType, tags FROM wiki_wikipagecontent WHERE (title_id = %s)and(revision = %s)" % (title_id, head_rev))
-  row = cursor.fetchone()
-  if row == None:
-    return "error"
-  old_id = row[0]
-  new_rev = str(int(row[4]) + 1)
-  tags = row[7]
+
+  new_rev = str(head_rev + 1)
 
   cursor.execute("UPDATE wiki_wikipagetitle SET head_revision = %s WHERE id = %s" % (new_rev, title_id))
   cursor.execute("""INSERT INTO wiki_wikipagecontent (title_id, content, author, revision, modificationTime, markupType, tags)
                     VALUES(%s, '%s', '%s', %s, '%s', '%s', '%s')  
-                 """ %(title_id, content, author, new_rev, MySQLdb.times.format_TIMESTAMP(datetime.datetime.now()), markupType, tags))
+                 """ %(title_id, content, author, new_rev, MySQLdb.times.format_TIMESTAMP(datetime.datetime.now()), markupType, tags_str))
 
-  newcont_id = myConnection.insert_id()
-  cursor.execute("SELECT tag_id FROM tagging_taggeditem WHERE (content_type_id = 12) and (object_id = %s)" % old_id)  
-  rows = cursor.fetchall()
+  insert_tags("wikipagecontent", myConnection.insert_id(), tags_str)
 
-  for row in rows:
-    tag_id = row[0]
-    print "tag_id = %s" % tag_id
-    cursor.execute("""INSERT INTO tagging_taggeditem (tag_id, content_type_id, object_id) 
-                      VALUES (%s, 12, %s)""" % (tag_id, newcont_id))    
   cursor.close()
   myConnection.commit()
   return ""
 
-def create_page(title, content, author, markupType):
+#----------------------------------------------------------------------------------------------------------
+
+def create_page(title, content, author, markupType, tags_str):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
+
   if myConnection == None:
     return "error: no connection with db server"
   cursor = myConnection.cursor()
@@ -116,11 +146,18 @@ def create_page(title, content, author, markupType):
                     VALUES(%s, '%s', '%s', 0, '%s', '%s', '')  
                  """ %(title_id, content, author, MySQLdb.times.format_TIMESTAMP(datetime.datetime.now()), markupType))
 
+  insert_tags("wikipagecontent", myConnection.insert_id(), tags_str)
+
   cursor.close()
   myConnection.commit()
   return ""
 
+#----------------------------------------------------------------------------------------------------------
+
 def get_page_list():
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
+
   if myConnection == None:
     return "error: no connection with db server"
   cursor = myConnection.cursor()
@@ -129,7 +166,11 @@ def get_page_list():
   cursor.close()
   return rows
 
+#----------------------------------------------------------------------------------------------------------
+
 def get_page(title):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
   if myConnection == None:
     return "error: no connection with db server"
   cursor = myConnection.cursor()
@@ -144,7 +185,11 @@ def get_page(title):
   cursor.close()
   return row
 
+#----------------------------------------------------------------------------------------------------------
+
 def get_revision(title, rev):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
   if myConnection == None:
     return "error: no connection with db server"
   cursor = myConnection.cursor()
@@ -160,9 +205,107 @@ def get_revision(title, rev):
   cursor.close()
   return row
 
+#----------------------------------------------------------------------------------------------------------
+
+def get_category(name):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
+  if myConnection == None:
+    return "error: no connection with db server"
+
+  cursor = myConnection.cursor()
+
+  cursor.execute("SELECT id FROM wiki_wikicategory WHERE (title = '%s')" % name)    
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such category"
+  
+  cursor.execute("SELECT id FROM tagging_tag WHERE (name = '%s')" % name)    
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such category"
+  cat_tag_id = row[0]
+
+  cursor.execute("SELECT id FROM django_content_type WHERE (model = 'wikicategory')")    
+  row = cursor.fetchone()
+  if row == None:
+    cursor.close()
+    return "error"
+
+  content_type = row[0]
+
+  cursor.execute("""SELECT title 
+                    FROM wiki_wikicategory
+                    WHERE id in ( SELECT object_id 
+                                  FROM tagging_taggeditem
+                                  WHERE (content_type_id = %s) and (tag_id = %s) 
+                                )""" % (content_type, cat_tag_id))
+
+  rows = cursor.fetchall()
+  if(rows == None): rows = "error"
+  cursor.close()
+  return rows
+
+#----------------------------------------------------------------------------------------------------------
+
+def add_category(parent, name):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
+  if myConnection == None:
+    return "error: no connection with db server"
+
+  cursor = myConnection.cursor()
+
+  cursor.execute("SELECT id FROM wiki_wikicategory WHERE (title = '%s')" % parent)    
+  row = cursor.fetchone()
+  if row == None:
+    return "error: parent category does not exists"
+
+  cursor.execute("SELECT id FROM tagging_tag WHERE (name = '%s')" % parent)    
+  row = cursor.fetchone()
+  if row == None:
+    return "error: parent category does not exists"
+
+  parent_id = str(row[0])
+
+  cursor.execute("SELECT * FROM wiki_wikicategory WHERE (title = '%s')" % name)    
+  row = cursor.fetchone()
+  if row != None:
+    return "error: category with this '%s' already exists" % name
+
+  cursor.execute("INSERT INTO wiki_wikicategory (title, tags) VALUES ('%s', '')" % name)      
+  cat_id =  str(myConnection.insert_id())
+
+  cursor.execute("SELECT id FROM tagging_tag WHERE name = '%s'" % name)    
+  row = cursor.fetchone()
+  if row == None:
+    cursor.execute("INSERT INTO tagging_tag (name) VALUES('%s')" % name)    
+    cat_tag_id = str(myConnection.insert_id())
+  else:
+    cat_tag_id = str(row[0])
+
+  cursor.execute("SELECT id FROM django_content_type WHERE (model = 'wikicategory')")    
+  row = cursor.fetchone()
+  if row == None:
+    cursor.close()
+    return "error"
+
+  content_type = row[0]
+
+  cursor.execute("""INSERT INTO tagging_taggeditem (tag_id, content_type_id, object_id) 
+                    VALUES (%s, %s, %s)""" % (parent_id, content_type, cat_id))    
+
+  cursor.close()
+  myConnection.commit()
+  return ""
+
+
+#----------------------------------------------------------------------------------------------------------
  
 dispatcher.register_function(update_page, 'update_page')
 dispatcher.register_function(create_page, 'create_page')
 dispatcher.register_function(get_page_list, 'get_page_list')
 dispatcher.register_function(get_page, 'get_page')
 dispatcher.register_function(get_revision, 'get_revision')
+dispatcher.register_function(get_category, 'get_category')
+dispatcher.register_function(add_category, 'add_category')
