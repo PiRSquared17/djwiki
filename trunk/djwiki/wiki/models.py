@@ -51,6 +51,7 @@ class WikiPageContent(models.Model):
         permissions = (
             ("can_view", "Can view"),
             ("can_edit", "Can edit"),
+            ("can_use_xmlrpc", "Can use xml-rpc"),
         )
 
 class WikiCategory(models.Model):

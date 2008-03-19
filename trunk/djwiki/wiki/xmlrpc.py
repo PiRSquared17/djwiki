@@ -13,6 +13,7 @@ from django.http import HttpResponse
 import MySQLdb
 import datetime
 from djwiki import settings
+from django.contrib.auth import authenticate
 
 
 # Create a Dispatcher; this handles the calls and translates info to function maps
@@ -31,6 +32,7 @@ except MySQLdb.Error, e:
 
 #----------------------------------------------------------------------------------------------------------
 
+#@user_passes_test(lambda u: u.has_perm('WikiPageContent.can_use_xmlrpc'))
 def rpc_handler(request):
         """
         the actual handler:
@@ -42,7 +44,28 @@ def rpc_handler(request):
 
         response = HttpResponse()
         if len(request.POST):
-                response.write(dispatcher._marshaled_dispatch(request.raw_post_data))
+                user = None 
+                try:
+                  username = request.GET['u']
+                  password = request.GET['p']
+                  user = authenticate(username=username, password=password)
+                except:
+                  pass
+
+                if (user == None) or not user.is_active or not user.has_perm('WikiPageContent.can_use_xmlrpc'):
+                  error_msg = """<?xml version='1.0'?>
+                                 <methodResponse>
+                                 <params>
+                                 <param>
+                                 <value><string>You don't have permissions to use xml-rpc.</string></value>
+                                 </param>
+                                 </params>
+                                 </methodResponse>"""
+
+                  response.write(error_msg)
+                else:
+                  response.write(dispatcher._marshaled_dispatch(request.raw_post_data))
+                 
         else:
                 response.write("<b>This is an XML-RPC Service.</b><br>")
                 response.write("You need to invoke it using an XML-RPC Client!<br>")
