@@ -50,13 +50,16 @@
         No pages in this category
     {%endif%}
 
-
-    <br/><hr/>
-    <h2>Add subcategory</h2>
-    <form method="post" action="">
-        <table>{{ form.as_table }}</table>
-        <input type="submit" value="Add" class="default"/>
-    </form>
+    {%if perms.wiki.add_wikicategory%}
+        <br/><hr/>
+        <h2>Add subcategory</h2>
+        <form method="post" action="">
+            <table>{{ form.as_table }}</table>
+            <input type="submit" value="Add" class="default"/>
+        </form>
+    {%else%}
+        You can not add subcategories
+    {%endif%}
 
 
 {% endblock %}

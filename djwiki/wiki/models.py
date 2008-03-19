@@ -47,6 +47,11 @@ class WikiPageContent(models.Model):
      return self.revision
   def get_absolute_url(self):
     return ("/wiki/%s/rev/%d/" % (self.title,self.revision))
+  class Meta:
+        permissions = (
+            ("can_view", "Can view"),
+            ("can_edit", "Can edit"),
+        )
 
 class WikiCategory(models.Model):
   title = models.CharField(max_length=100, unique=True)
@@ -75,3 +80,7 @@ class UploadedFile(models.Model):
 
   class Meta:
     unique_together = ("name", "page", "type")
+    permissions = (
+            ("can_upload", "Can upload"),
+        )
+
