@@ -49,8 +49,8 @@ Beta ():
   * xmlrpc (SQL, transactions) _*Done*_
     * provide functions to manipulte with wiki-pages, categories and etc.
     * connect to the DB directly via mod !MySqlDb
-  * authorization
+  * authorization _*Done*_
   * roles
-    * base privileges
+    * base privileges _*Done*_
     * hierarchy
   * ssl
