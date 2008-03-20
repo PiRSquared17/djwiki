@@ -71,36 +71,32 @@ def view_category(request):
     param = request.GET['f']
   else:
     param = 'Main'
-  category = WikiCategory.objects.get_or_create(title = param)  
-  #category = WikiCategory.objects.get(title = param)
-  tag = Tag.objects.get_or_create(name=param)
-  tag = Tag.objects.get(name= param)
+
+  category, created = WikiCategory.objects.get_or_create(title = param)  
+  tag, created = Tag.objects.get_or_create(name=param)
   if request.method == 'GET':
-    editForm = CreateCategoryForm()  
+    categoryForm = CreateCategoryForm()  
     return render_to_response('wiki/view_category.html', 
-             {'category': category,'tag' : tag,'form' : editForm},
+             {'tag' : tag,'form' : categoryForm},
                 context_instance=template.RequestContext(request))
   elif request.method == 'POST':
-    editForm = CreateCategoryForm(request.POST.copy())
+    categoryForm = CreateCategoryForm(request.POST.copy())
     try:
-      cat = WikiCategory.objects.get(title = editForm.data['Name'])
-      editForm = CreateCategoryForm()  
+      cat = WikiCategory.objects.get(title = categoryForm.data['Name'])
       alreadyExistsErrorMsg = [unicode("Category with this name is already exists")]
-      editForm.errors['Name'] = alreadyExistsErrorMsg
+      categoryForm.errors['Name'] = alreadyExistsErrorMsg
       return render_to_response('wiki/view_category.html', 
-           {'category': category,'tag' : tag,'form' : editForm},
+           {'tag' : tag,'form' : categoryForm},
                 context_instance=template.RequestContext(request))
     except:
-      cat = WikiCategory.objects.create(title = editForm.data['Name'])  
-#      cat = WikiCategory.objects.get(title = editForm.data['Name'])
+      cat = WikiCategory.objects.create(title = categoryForm.data['Name'])  
       Tag.objects.add_tag(cat, param)
-      print('error');
       return render_to_response('wiki/view_category.html', 
-           {'category': category,'tag' : tag,'form' : editForm},
+           {'tag' : tag,'form' : categoryForm},
            context_instance=template.RequestContext(request))
 
-
 #----------------------------------------------------------------------------------------------------------
+
 def register_user(request):
   if request.method == 'GET':
     if request.user is None or request.user.username=="":
@@ -108,12 +104,12 @@ def register_user(request):
       register = "1"
     else:
       regForm = UserParamForm(initial={'username': request.user, 
-	'pass1':"bad_pass", 'pass2':"bad_pass", 'firstName':request.user.first_name,
+        'pass1':"bad_pass", 'pass2':"bad_pass", 'firstName':request.user.first_name,
         'secondName':request.user.last_name, 'email':request.user.email})  
       register = ""
     return render_to_response('registration/register.html', 
              {'form' : regForm, 'register' : register},
-		context_instance=template.RequestContext(request))
+                context_instance=template.RequestContext(request))
   elif request.method == 'POST':
     regForm = UserRegistrationForm(request.POST.copy())
     name = regForm.data['username'];
@@ -131,12 +127,12 @@ def register_user(request):
     if useremail=='' or pass1 == '':
         return render_to_response('registration/register.html', 
            {'form' : regForm},
-	   context_instance=template.RequestContext(request))
+           context_instance=template.RequestContext(request))
     if pass1==pass2 and user is None:
             user = User.objects.create_user(name,useremail,pass1)
-	    user.first_name = firstName
-	    user.last_name = secondName
-	    user.save()
+            user.first_name = firstName
+            user.last_name = secondName
+            user.save()
             user = authenticate(username=name, password=pass1)
             if user.is_active:
                 login(request, user)
@@ -145,18 +141,18 @@ def register_user(request):
         user.first_name = firstName
         user.last_name = secondName
         user.email = useremail
-	if pass1=="bad_pass":
-	   pass2=pass1
-	else:
-	   print(pass1)
-	   user.set_password(pass1)
-	user.save()
-	return HttpResponseRedirect('/wiki/home')	
+        if pass1=="bad_pass":
+           pass2=pass1
+        else:
+           print(pass1)
+           user.set_password(pass1)
+        user.save()
+        return HttpResponseRedirect('/wiki/home')       
     else:
-	regForm.errors['pass2'] = [unicode("Passwords doesn't match each other")]
+        regForm.errors['pass2'] = [unicode("Passwords doesn't match each other")]
         return render_to_response('registration/register.html', 
            {'form' : regForm},
-	   context_instance=template.RequestContext(request))
+           context_instance=template.RequestContext(request))
 
     
 #----------------------------------------------------------------------------------------------------------
