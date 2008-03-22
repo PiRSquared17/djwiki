@@ -9,7 +9,9 @@
 {% block title %}wiki page{% endblock %}
 
 {% block content %}
-  {%if perms.wiki.can_view%}
+  {# {%if perms.wiki.can_view %} #}
+  {% if 1 %}
+
     <body type="text/javascript" onload="toggleBox('diff page', 0)"/>
  
     <h1>{{ page.title }}</h1>

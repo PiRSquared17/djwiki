@@ -16,6 +16,7 @@ from djwiki import settings
 from django.contrib.auth.decorators import login_required
 from django import template
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Permission
 
 
 
@@ -24,8 +25,9 @@ from django.contrib.comments.views.comments import post_free_comment
 from django.http import HttpResponseRedirect
 
 def get_user_name (request):
-  if request.user == None:
+  if request.user == None or request.user.username=='':
      return 'Anonymous'
+ 
   if request.user.first_name:
     if request.user.last_name:
       return "%s %s" % (request.user.first_name, request.user.last_name)	
@@ -360,6 +362,8 @@ def view_revisions(request, page_title):
   for rev in revisions:
     text = rev.title.title + ' rev ' + str(rev.revision) 
     choices.append((str(rev.revision), text))
+  print(choices)
+
 
   if request.method == 'GET':
     form = Form()
@@ -398,3 +402,20 @@ def diff_page(request, page_title):
       raise Http404
   except:
     raise Http404
+
+#------------------------------------------------------------------------
+def view_permissions(request):
+  pageTitle = WikiPageTitle.objects.get(title='home')
+  perms = request.user.user_permissions
+  choices = []
+  i = 0
+  for perm in Permission.objects.all():
+    print (perm)
+    text = '%s' % perm
+    choices.append((str(i), text))
+    i=i+1
+  print(choices)
+
+
+  return render_to_response('wiki/rev_list.html', {'list': perms, 'form': None},
+                        context_instance=template.RequestContext(request))
