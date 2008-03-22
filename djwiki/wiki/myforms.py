@@ -51,3 +51,6 @@ class UserParamForm(Form):
     pass1 = CharField(widget = PasswordInput)
     pass2 = CharField(widget = PasswordInput)
 
+class PermissionsForm(Form):
+    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple())
+
