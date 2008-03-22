@@ -23,6 +23,18 @@ from django.contrib.auth import authenticate, login
 from django.contrib.comments.views.comments import post_free_comment
 from django.http import HttpResponseRedirect
 
+def get_user_name (request):
+  if request.user == None:
+     return 'Anonymous'
+  if request.user.first_name:
+    if request.user.last_name:
+      return "%s %s" % (request.user.first_name, request.user.last_name)	
+    else: 
+      return request.user.first_name
+  else:
+    return request.user.username
+ 
+
 def my_post_free_comment(request):
         if request.has_key('url') and not request.has_key('preview'):
                 response = post_free_comment(request)
@@ -96,7 +108,6 @@ def view_category(request):
            context_instance=template.RequestContext(request))
 
 #----------------------------------------------------------------------------------------------------------
-
 def register_user(request):
   if request.method == 'GET':
     if request.user is None or request.user.username=="":
@@ -174,7 +185,7 @@ def view_page(request, page_title, rev, is_head):
   except:
     return HttpResponseRedirect("/wiki/%s/create/" % page_title)
   return render_to_response('wiki/view_page.html', {'page': page, 'pageTitle' : pageTitle, 'diff_content':diff_content,
-                                                   'user':request.user},
+                                                   'user':request.user, 'username':get_user_name(request)},
                         context_instance=template.RequestContext(request))
 
 #----------------------------------------------------------------------------------------------------------
@@ -189,7 +200,8 @@ def create_page(request, page_title):
     except:
       pageTitle = WikiPageTitle()
       pageTitle.title = page_title
-      editForm = WikiEditForm(initial={'revision': pageTitle.head_revision, 'title' : pageTitle.title})
+      editForm = WikiEditForm(initial={'revision': pageTitle.head_revision, 'title' : pageTitle.title,
+					'author':get_user_name(request)})
     else:
       return HttpResponseRedirect("/wiki/%s/" % page_title)
 
@@ -254,7 +266,8 @@ def edit_page(request, page_title):
         
   else:
     page.revision = pageTitle.head_revision + 1
-    editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title})
+    editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title,
+						      'author':get_user_name(request)})
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page, 
                                                     'title': 'Edit page', 'view_conflict': view_conflict,

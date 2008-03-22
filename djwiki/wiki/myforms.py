@@ -17,7 +17,7 @@ class WikiEditForm(ModelForm):
   title = CharField(widget=ReadOnlyText())
   content = CharField(widget=Textarea(attrs={'rows':40, 'cols':160}))
   markupType = ChoiceField(choices=(('markdown', 'markdown'), ('wikimedia', 'wikimedia')))
-
+  author = CharField(max_length=100,widget=ReadOnlyText())
   class Meta:
     model = WikiPageContent
 
