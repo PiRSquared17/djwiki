@@ -1,6 +1,6 @@
 from djwiki.wiki.models import *
 from django.newforms import *
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from django.core import validators
 from django import oldforms
 from django.utils.translation import ugettext as _
@@ -62,3 +62,6 @@ class PermissionsForm(Form):
 class CreateGroupForm(Form):
     groupname =  CharField(required=True)
 
+class EditGroupForm(Form):
+    groupname =  ModelChoiceField (queryset=Group.objects.all(), 
+            widget=Select(attrs={'onchange':'javasctipt: submitform()'}))     

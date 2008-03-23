@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Permissions {% endblock %}
+
+{% block content %}
+ <SCRIPT language="JavaScript">
+function submitform()
+{
+  document.form.submit();
+}
+</SCRIPT> 
+
+                      
+    <hr/><br/>
+    <h1>{{title}}</h1>
+    <br/>
+
+    <form method="post" action="" name="form">
+      <tr><th><label for="id_User_0">Groupname:</label></th><td>
+      	{{ form.groupname }}
+      </td></tr><br><br>
+
+      <tr><th><label for="id_Groups_0">Groups:</label></th><td><ul>
+      {% for choice in groupChoices %}
+        <li><label><input {% ifequal  choice.2 "1" %} checked="checked" {% endifequal %} type="checkbox" name="Groups" value="{{choice.0}}" id="id_Groups_0" /> {{choice.1}} </label></li>
+      {% endfor %}
+      </ul></td></tr>  
+
+      <tr><th><label for="id_Permissions_0">Permissions:</label></th><td><ul>
+      {% for choice in permsChoices %}
+        <li><label><input {% ifequal  choice.2 "1" %} checked="checked" {% endifequal %} type="checkbox" name="Permissions" value="{{choice.0}}" id="id_Permissions_0" /> {{choice.1}} </label></li>
+      {% endfor %}
+      </ul></td></tr>
+
+      <input type="submit" align="left" value="Apply" class="default"/>
+      <input type="button" align="left" value="cancel" onclick="location.href='/wiki/home/'"/> 
+      <A HREF="javascript: submitform();">Send data</A> 
+    </form>
+
+{% endblock %}

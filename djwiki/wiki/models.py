@@ -85,3 +85,10 @@ class UploadedFile(models.Model):
             ("can_upload", "Can upload"),
         )
 
+class GroupManager (models.Model):
+  group = models.IntegerField()
+  subgroup = models.IntegerField()
+  class Meta:
+    unique_together = ("group", "subgroup")
+  class Admin:
+    pass
