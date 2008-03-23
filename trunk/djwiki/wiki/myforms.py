@@ -52,5 +52,10 @@ class UserParamForm(Form):
     pass2 = CharField(widget = PasswordInput)
 
 class PermissionsForm(Form):
-    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple())
+    from django.contrib.auth.models import User
+    User = ModelChoiceField (queryset=User.objects.filter(is_active=True), 
+            widget=Select(attrs={'onchange':'javasctipt: submitform()'}))     
+ 
+    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple)
+
 
