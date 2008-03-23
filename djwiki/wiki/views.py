@@ -405,17 +405,57 @@ def diff_page(request, page_title):
 
 #------------------------------------------------------------------------
 def view_permissions(request):
+  from django.db import models
+  from django.db.models import get_models
   pageTitle = WikiPageTitle.objects.get(title='home')
   perms = request.user.user_permissions
   choices = []
+  perm_names = []
+  init=[]
   i = 0
+  if 'f' in request.GET:
+     userid = request.GET['f']
+     EditUser = User.objects.get(id=userid) 
+  else:
+     userid = request.user.id
+     EditUser = request.user
+  print("Edit permissions for user")
+  print("Name %s ID %s" % (EditUser.username,userid))
+#  for perm in EditUser.user_permissions.all():
+#    print(perm)
   for perm in Permission.objects.all():
-    print (perm)
     text = '%s' % perm
     choices.append((str(i), text))
-    i=i+1
-  print(choices)
+    if EditUser.has_perm("%s.%s" %(perm.content_type.app_label,perm.codename)):
+      init.append(str(i))
+    perm_names.append(perm);
+    i=i+1  
+  if request.method == 'GET':
+    form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid)});
+    form.base_fields['Permissions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple(),
+                                      initial = {'choices': 0})
+  elif request.method == 'POST':
+    form = PermissionsForm(request.POST)
+    if True: #form.is_valid():
+      try:
+        selected = form.data['Permissions'] 
+        uname = form.data['User'];
+        EditUser = User.objects.get(id=uname)
+    #
+    #    print(form.data['User'] )
+    #    EditUser.user_permissions.clear()
+    #    print(selected)
+    #    for sel in selected:
+    #	  print(int(sel))
+#	  print(perm_names[int(sel)])
+#          EditUser.user_permissions.add(perm_names[int(sel)])
+#	  print(sel)
+#        EditUser.save()
+      except:
+        k=0
+    url = '/wiki/permissions/?f=%s' % EditUser.id
+    return HttpResponseRedirect(url)
 
-
-  return render_to_response('wiki/rev_list.html', {'list': perms, 'form': None},
+ 
+  return render_to_response('wiki/perm_list.html', {'list': perms, 'form': form},
                         context_instance=template.RequestContext(request))
