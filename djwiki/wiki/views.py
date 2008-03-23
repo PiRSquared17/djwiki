@@ -427,6 +427,7 @@ def view_permissions(request):
 
   groupChoices = []
   groupInit = []
+  groups = []
   i=0
   for group in Group.objects.all():
     if group in EditUser.groups.all():
@@ -434,10 +435,12 @@ def view_permissions(request):
       groupInit.append(str(i))
     else:
       groupChoices.append((str(i),str(group.name)))
+    groups.append(group)
     i=i+1
 
 #  for perm in EditUser.user_permissions.all():
 #    print(perm)
+  i=0
   for perm in Permission.objects.all():
     text = '%s' % perm
     choices.append((str(i), text))
@@ -445,8 +448,7 @@ def view_permissions(request):
       init.append(str(i))
     permissions.append(perm);
     i=i+1
-  print(i)  
-  print(permissions)
+
   if request.method == 'GET':
     lastUserID = EditUser.id
     form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid),
@@ -469,10 +471,16 @@ def view_permissions(request):
     if str(uname) == str(lastUserID):
       print('NEED PARAM UPDATE')
       permsSelection = form.data.getlist('Permissions') 
-      print(permsSelection)
+      EditUser.user_permissions.clear()
       for sel in permsSelection:
         print(sel)
         EditUser.user_permissions.add(permissions[int(sel)])
+      EditUser.save()
+      groupsSelection = form.data.getlist('Groups') 
+      EditUser.groups.clear()
+      for sel in groupsSelection:
+        print(sel)
+        EditUser.groups.add(groups[int(sel)])
       EditUser.save()
     else:
       print("OLD USER, NO UPDATE") 
