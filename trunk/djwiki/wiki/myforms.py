@@ -56,6 +56,7 @@ class PermissionsForm(Form):
     User = ModelChoiceField (queryset=User.objects.filter(is_active=True), 
             widget=Select(attrs={'onchange':'javasctipt: submitform()'}))     
  
-    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple)
+    Groups = MultipleChoiceField(widget=CheckboxSelectMultiple)
+#    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple)
 
 
