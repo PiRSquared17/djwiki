@@ -18,11 +18,11 @@ from django import template
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Permission
 
-
-
-
 from django.contrib.comments.views.comments import post_free_comment
 from django.http import HttpResponseRedirect
+
+lastUserID=[]
+lastUserID.append(str(1))
 
 def get_user_name (request):
   if request.user == None or request.user.username=='':
@@ -407,10 +407,11 @@ def diff_page(request, page_title):
 def view_permissions(request):
   from django.db import models
   from django.db.models import get_models
-  pageTitle = WikiPageTitle.objects.get(title='home')
+  from django.contrib.auth.models import Group
+
   perms = request.user.user_permissions
   choices = []
-  perm_names = []
+  permissions = []
   init=[]
   i = 0
   if 'f' in request.GET:
@@ -419,8 +420,22 @@ def view_permissions(request):
   else:
      userid = request.user.id
      EditUser = request.user
+  lastUserID = EditUser.id
+
   print("Edit permissions for user")
   print("Name %s ID %s" % (EditUser.username,userid))
+
+  groupChoices = []
+  groupInit = []
+  i=0
+  for group in Group.objects.all():
+    if group in EditUser.groups.all():
+      groupChoices.append((str(i),str(group.name),"1"))
+      groupInit.append(str(i))
+    else:
+      groupChoices.append((str(i),str(group.name)))
+    i=i+1
+
 #  for perm in EditUser.user_permissions.all():
 #    print(perm)
   for perm in Permission.objects.all():
@@ -428,34 +443,48 @@ def view_permissions(request):
     choices.append((str(i), text))
     if EditUser.has_perm("%s.%s" %(perm.content_type.app_label,perm.codename)):
       init.append(str(i))
-    perm_names.append(perm);
-    i=i+1  
+    permissions.append(perm);
+    i=i+1
+  print(i)  
+  print(permissions)
   if request.method == 'GET':
-    form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid)});
+    lastUserID = EditUser.id
+    form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid),
+				      'Groups':groupInit});
     form.base_fields['Permissions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple(),
                                       initial = {'choices': 0})
+    #form.base_fields['Groups'] = MultipleChoiceField(choices=groupChoices, widget=CheckboxSelectMultiple())
+
   elif request.method == 'POST':
     form = PermissionsForm(request.POST)
-    if True: #form.is_valid():
-      try:
-        selected = form.data['Permissions'] 
-        uname = form.data['User'];
-        EditUser = User.objects.get(id=uname)
-    #
-    #    print(form.data['User'] )
-    #    EditUser.user_permissions.clear()
-    #    print(selected)
-    #    for sel in selected:
-    #	  print(int(sel))
-#	  print(perm_names[int(sel)])
-#          EditUser.user_permissions.add(perm_names[int(sel)])
-#	  print(sel)
-#        EditUser.save()
-      except:
-        k=0
+    try:
+      print(form.data.getlist('Groups'))
+      for s in form.data['Groups']:
+        print(s)
+    except:
+      i=0
+    uname = form.data.getlist('User')[0];
+    EditUser = User.objects.get(id=uname)
+    print("***************")
+    if str(uname) == str(lastUserID):
+      print('NEED PARAM UPDATE')
+      permsSelection = form.data.getlist('Permissions') 
+      print(permsSelection)
+      for sel in permsSelection:
+        print(sel)
+        EditUser.user_permissions.add(permissions[int(sel)])
+      EditUser.save()
+    else:
+      print("OLD USER, NO UPDATE") 
+    print("***************")    
+    lastUserID = EditUser.id
     url = '/wiki/permissions/?f=%s' % EditUser.id
     return HttpResponseRedirect(url)
 
+
+  print("HHHHHH")
+  print(groupChoices[0][0]) 
  
-  return render_to_response('wiki/perm_list.html', {'list': perms, 'form': form},
+  return render_to_response('wiki/perm_list.html', {'list': perms, 'form': form,
+                          'groupChoices': groupChoices},
                         context_instance=template.RequestContext(request))
