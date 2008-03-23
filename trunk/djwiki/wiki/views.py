@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django import template
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Permission
+from djwiki.wiki.models import GroupManager
 
 from django.contrib.comments.views.comments import post_free_comment
 from django.http import HttpResponseRedirect
@@ -437,6 +438,21 @@ def view_permissions(request):
       groupChoices.append((str(i),str(group.name)))
     groups.append(group)
     i=i+1
+  i=0
+#  print("GroupManager")
+#  print(GroupManager.objects.all())
+#  for group in Group.objects.all():
+#   print("Getting subgroups for group %s ID = %s" % (group, group.id)) 
+#    for cand in GroupManager.objects.all():
+#      if cand.group == group.id:
+#        print (cand.subgroup)
+#        try:
+#          gr = Group.objects.get(id = cand.subgroup)
+#          print("Group %s i=%s" % (gr,i))
+#          groupChoices[cand.subgroup]=((str(cand.subgroup),str(gr.name),"1"))   
+#        except:
+#	  k=0
+#    i=i+1
 
 #  for perm in EditUser.user_permissions.all():
 #    print(perm)
@@ -482,6 +498,12 @@ def view_permissions(request):
       for sel in groupsSelection:
         print(sel)
         EditUser.groups.add(groups[int(sel)])
+        #subgroups = GroupManager.objects.get(group=groups[int(sel)].id)
+        #for subgroup in subgroups:
+        #  print (subgroup)
+        #  gr = Groups.objects.get(id = subgroup.subgroup)
+        #  EditUser.groups.add(gr)
+
       EditUser.save()
     else:
       print("OLD USER, NO UPDATE") 
@@ -532,9 +554,104 @@ def add_group(request):
       print(sel)
       group.permissions.add(permissions[int(sel)])
     group.save()
+    groupsSelection = form.data.getlist('Groups') 
+    group.groups.clear()
+    for sel in groupsSelection:
+      print(sel)
+      subgroup = Groups.object.get(id = int(sel))
+      for p in subgroup.permissions:
+        group.permissions.add(p) 
+    group.save()
+
+#    groupSelection = form.data.getlist('Groups') 
+#    print(groupSelection)
+#    for sel in groupSelection:
+#      print("************************")
+#      print("Adding subgroup")
+#      print(sel)
+#      groupLink = GroupManager.objects.get_or_create(group=group.id,subgroup = int(sel))
+#      groupLink[0].save()
+#      print(groupLink)
+#      group.permissions.add(permissions[int(sel)])
+#    group.save()
     url = '/wiki/addgroup/'
     return HttpResponseRedirect(url)
 
   return render_to_response('wiki/add_group.html', {'list': None, 'form': form,
                           'groupChoices': groupChoices, 'permsChoices':permsChoices},
                         context_instance=template.RequestContext(request))
+
+def edit_group(request):
+  from django.db import models
+  from django.db.models import get_models
+  from django.contrib.auth.models import Group
+
+  perms = request.user.user_permissions
+  permsChoices = []
+  permissions = []
+  init=[]
+  i = 0
+  if 'f' in request.GET:
+     groupid = request.GET['f']
+     EditGroup = Group.objects.get(id=groupid) 
+  else:
+     EditGroup = Group.objects.get(id=1)
+     groupid = 1 
+  lastGroupID = EditGroup.id
+
+  print("Edit permissions for group")
+  print("Name %s ID %s" % (EditGroup.name,groupid))
+
+  i = 0
+  for perm in Permission.objects.all():
+    if perm in EditGroup.permissions.all():
+      permsChoices.append((str(i), str(perm),"1"))
+      init.append(str(i))
+    else:
+      permsChoices.append((str(i), str(perm)))
+    permissions.append(perm);
+    i=i+1
+  groupChoices = []
+  groups = []
+  i = 0
+
+  for group in Group.objects.all():
+    groupChoices.append((str(i), str(group)))
+    groups.append(group);
+    i=i+1
+
+
+  if request.method == 'GET':
+    lastGroupID = EditGroup.id
+    form = EditGroupForm(initial = {'groupname':str(EditGroup.id)});
+  elif request.method == 'POST':
+    form = EditGroupForm(request.POST) 
+    gname = form.data.getlist('groupname')[0];
+    EditGroup = Group.objects.get(id=gname)
+    print("***************")
+    if str(gname) == str(lastGroupID):
+      print('NEED PARAM UPDATE')
+      permsSelection = form.data.getlist('Permissions') 
+      EditGroup.permissions.clear()
+      for sel in permsSelection:
+        print(sel)
+        EditGroup.permissions.add(permissions[int(sel)])
+      groupsSelection = form.data.getlist('Groups') 
+      for sel in groupsSelection:
+        print(sel)
+        subgroup = Group.objects.get(id = int(sel)+1)
+        for p in subgroup.permissions.all():
+          EditGroup.permissions.add(p) 
+      EditGroup.save()
+
+    else:
+      print("OLD USER, NO UPDATE") 
+    print("***************")    
+    lastGroupID = EditGroup.id
+    url = '/wiki/editgroup/?f=%s' % EditGroup.id
+    return HttpResponseRedirect(url)
+
+  return render_to_response('wiki/add_group.html', {'list': perms, 'form': form,
+                          'groupChoices': groupChoices, 'permsChoices':permsChoices},
+                        context_instance=template.RequestContext(request))
+#----------------------------------------------------------------------
