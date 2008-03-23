@@ -59,4 +59,6 @@ class PermissionsForm(Form):
     Groups = MultipleChoiceField(widget=CheckboxSelectMultiple)
 #    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple)
 
+class CreateGroupForm(Form):
+    groupname =  CharField(required=True)
 

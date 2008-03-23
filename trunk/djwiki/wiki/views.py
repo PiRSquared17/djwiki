@@ -410,7 +410,7 @@ def view_permissions(request):
   from django.contrib.auth.models import Group
 
   perms = request.user.user_permissions
-  choices = []
+  permsChoices = []
   permissions = []
   init=[]
   i = 0
@@ -442,10 +442,11 @@ def view_permissions(request):
 #    print(perm)
   i=0
   for perm in Permission.objects.all():
-    text = '%s' % perm
-    choices.append((str(i), text))
-    if EditUser.has_perm("%s.%s" %(perm.content_type.app_label,perm.codename)):
+    if perm in EditUser.user_permissions.all():
+      permsChoices.append((str(i), str(perm),"1"))
       init.append(str(i))
+    else:
+      permsChoices.append((str(i), str(perm)))
     permissions.append(perm);
     i=i+1
 
@@ -453,8 +454,8 @@ def view_permissions(request):
     lastUserID = EditUser.id
     form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid),
 				      'Groups':groupInit});
-    form.base_fields['Permissions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple(),
-                                      initial = {'choices': 0})
+    #form.base_fields['Permissions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple(),
+    #                                  initial = {'choices': 0})
     #form.base_fields['Groups'] = MultipleChoiceField(choices=groupChoices, widget=CheckboxSelectMultiple())
 
   elif request.method == 'POST':
@@ -489,10 +490,51 @@ def view_permissions(request):
     url = '/wiki/permissions/?f=%s' % EditUser.id
     return HttpResponseRedirect(url)
 
-
-  print("HHHHHH")
-  print(groupChoices[0][0]) 
- 
   return render_to_response('wiki/perm_list.html', {'list': perms, 'form': form,
-                          'groupChoices': groupChoices},
+                          'groupChoices': groupChoices, 'permsChoices':permsChoices},
+                        context_instance=template.RequestContext(request))
+
+
+
+#----------------------------------------------------------------------
+def add_group(request):
+  from django.db import models
+  from django.db.models import get_models
+  from django.contrib.auth.models import Group
+
+  permsChoices = []
+  permissions = []
+  i = 0
+  for perm in Permission.objects.all():
+    permsChoices.append((str(i), str(perm)))
+    permissions.append(perm);
+    i=i+1
+  groupChoices = []
+  groups = []
+  i = 0
+  for group in Group.objects.all():
+    groupChoices.append((str(i), str(group)))
+    groups.append(group);
+    i=i+1
+
+
+  if request.method == 'GET':
+    form = CreateGroupForm(initial = {'groupname': 'groupname'});
+  elif request.method == 'POST':
+    form = CreateGroupForm(request.POST)
+    name = form.data.getlist('groupname')[0];
+    group = Group.objects.get_or_create(name = name)
+    group = Group.objects.get(name = name)
+
+    permsSelection = form.data.getlist('Permissions') 
+    group.permissions.clear()
+    for sel in permsSelection:
+      print(sel)
+      group.permissions.add(permissions[int(sel)])
+    group.save()
+    url = '/wiki/addgroup/'
+    return HttpResponseRedirect(url)
+
+  return render_to_response('wiki/add_group.html', {'list': None, 'form': form,
+                          'groupChoices': groupChoices, 'permsChoices':permsChoices},
                         context_instance=template.RequestContext(request))
