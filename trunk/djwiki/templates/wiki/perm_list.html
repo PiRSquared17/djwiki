@@ -20,6 +20,7 @@ function submitform()
       	{{ form.User }}
       </td></tr><br><br>
 
+      {{groupChoices}}
       <tr><th><label for="id_Groups_0">Groups:</label></th><td><ul>
       {% for choice in groupChoices %}
         <li><label><input {% ifequal  choice.2 "1" %} checked="checked" {% endifequal %} type="checkbox" name="Groups" value="{{choice.0}}" id="id_Groups_0" /> {{choice.1}} </label></li>
