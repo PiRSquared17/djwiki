@@ -14,6 +14,7 @@ import MySQLdb
 import datetime
 from djwiki import settings
 from django.contrib.auth import authenticate
+from djwiki.wiki.diff import TextDiff
 
 
 # Create a Dispatcher; this handles the calls and translates info to function maps
@@ -191,6 +192,51 @@ def get_page_list():
 
 #----------------------------------------------------------------------------------------------------------
 
+def get_revisions(title):
+  if settings.DATABASE_ENGINE != 'mysql':
+    return "error: xml-rpc not supported"
+
+  if myConnection == None:
+    return "error: no connection with db server"
+
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT id, head_revision FROM wiki_wikipagetitle WHERE title = '%s'" % title)
+  row = cursor.fetchone()
+  if row == None:
+    return "error: no such page"
+  title_id = row[0]
+  head_rev = row[1]
+
+  cursor = myConnection.cursor()
+  cursor.execute("SELECT content, tags, revision, author, modificationTime FROM wiki_wikipagecontent WHERE title_id = %s ORDER BY revision ASC" % title_id)
+  rows = cursor.fetchall()
+  cursor.close()
+
+  res = "<revisions>\n"
+
+  oldrow = None
+
+  for row in rows:
+    if oldrow:
+      diff_content = TextDiff(oldrow[0], row[0]).getDiff()
+      diff_tags = TextDiff(oldrow[1], row[1]).getDiff()
+    else:
+      diff_content = row[0]
+      diff_tags = row[1]
+    res += "  <item>\n"
+    res += "    <rev>%d</rev>\n" % row[2]  
+    res += "    <author>%s</author>\n" % row[3]  
+    res += "    <modificationTime>%s</modificationTime>\n" % str(row[4])  
+    res += "    <tags>%s</tags>\n" % diff_tags
+    res += "    <content>%s</content>\n" % diff_content
+    res += "  </item>\n"
+    oldrow = row
+  
+  res += "</revisions>\n"
+  return res
+
+#----------------------------------------------------------------------------------------------------------
+
 def get_page(title):
   if settings.DATABASE_ENGINE != 'mysql':
     return "error: xml-rpc not supported"
@@ -328,6 +374,7 @@ def add_category(parent, name):
 dispatcher.register_function(update_page, 'update_page')
 dispatcher.register_function(create_page, 'create_page')
 dispatcher.register_function(get_page_list, 'get_page_list')
+dispatcher.register_function(get_revisions, 'get_revisions')
 dispatcher.register_function(get_page, 'get_page')
 dispatcher.register_function(get_revision, 'get_revision')
 dispatcher.register_function(get_category, 'get_category')
