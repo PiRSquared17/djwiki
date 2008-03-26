@@ -339,18 +339,18 @@ def view_file(request, file, page, type):
 def view_revisions(request, page_title):
   try:
     pageTitle = WikiPageTitle.objects.get(title=page_title)
-    revisions = list(WikiPageContent.objects.filter(title=pageTitle))
+    revisions = WikiPageContent.objects.filter(title=pageTitle)
     rev_list = []
     errors = None
 
-    rev = revisions.pop(0)
-    text = ' rev 0  Author ' + rev.author + '  modification time ' + str(rev.modificationTime) + '  tags ' + rev.tags + '  content ' + rev.content
-    rev_list.append(('0', rev.author, rev.modificationTime, rev.tags,   rev.content))
-    old_rev = rev
-
+    old_rev = None
     for rev in revisions:
-      diff_content = TextDiff(old_rev.content, rev.content).getDiff()
-      diff_tags = TextDiff(old_rev.tags, rev.tags).getDiff()
+      if old_rev:
+        diff_content = TextDiff(old_rev.content, rev.content).getDiff()
+        diff_tags = TextDiff(old_rev.tags, rev.tags).getDiff()
+      else:
+        diff_content = rev.content
+        diff_tags = rev.tags
       text = ' rev ' + str(rev.revision) + ' Author ' + rev.author + '  modification time ' + str(rev.modificationTime) + '  tags ' + diff_tags + '  content ' + diff_content
       rev_list.append((str(rev.revision), rev.author,  rev.modificationTime, diff_tags, diff_content))
       old_rev = rev
