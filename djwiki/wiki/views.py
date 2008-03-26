@@ -296,10 +296,6 @@ def upload_page(request):
       file.data = b64encode(upForm.cleaned_data['file'].content) 
       file.save()
 
-      abs_path = settings.MEDIA_ROOT + type + '/' + pageTitle.title + '/' + filename
-      if(os.path.exists(abs_path)):
-        os.remove(abs_path)
-
       return HttpResponseRedirect("/wiki/upload/successful/?p=%s&f=%s&t=%s" % (file.page.title, file.name, file.type))
 
   return render_to_response('wiki/upload_page.html', {'form': upForm},
@@ -328,33 +324,18 @@ def upload_done_page(request):
     raise Http404
 
 #------------------------------------------------------------------------
+
 def view_file(request, file, page, type):
-  if type == 'image':
-    abs_path = settings.MEDIA_ROOT + 'image/' + page + '/'
-  elif type == 'file':
-    abs_path = settings.MEDIA_ROOT + 'file/' + page + '/'
-  else:  
-    pass
-#    raise Http404
- 
-  if(not os.path.exists(abs_path)):
-    mkdir(abs_path)
+  try:
+    pageTitle = WikiPageTitle.objects.get(title = page)
+    fileObj = UploadedFile.objects.get(name = file, page = pageTitle, type = type)
+  except:
+    raise Http404
 
-  abs_path += file
-
-  if(not os.path.exists(abs_path)):
-    try:
-      pageTitle = WikiPageTitle.objects.get(title = page)
-      fileObj = UploadedFile.objects.get(name = file, page = pageTitle, type = type)
-      f = open(abs_path, 'wb')
-      f.write(b64decode(fileObj.data))
-      f.close()
-    except:
-      raise Http404
-
-  return HttpResponseRedirect("/wiki/dynamic/" + type + '/' + page + '/' + file)  
+  return HttpResponse(content=(b64decode(fileObj.data)), content_type="binary/octet-stream") 
 
 #------------------------------------------------------------------------
+
 def view_revisions(request, page_title):
 #  try:
   pageTitle = WikiPageTitle.objects.get(title=page_title)
