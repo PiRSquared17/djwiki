@@ -60,7 +60,7 @@ def escape_html(str):
   res = res.replace(">", " &gt; ")
   res = res.replace("'", " &apos; ")
   res = res.replace('"', " &quot; ")
-  res = res.replace("\n", " <br> ")
+  res = res.replace("\n", " <br/> ")
   return res                                
 
 #if __name__ == "__main__":
