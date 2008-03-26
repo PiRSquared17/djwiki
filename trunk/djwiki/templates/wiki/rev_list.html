@@ -9,7 +9,35 @@
     <br/>
 
     <form method="post" action="">
-      <table>{{ form.as_table }}</table>
+
+    <table>{{ form.as_table }}</table>
+
+    <table cellspacing="0">
+    <thead><tr>
+      <th class="sorted ascending"></th>
+      <th>Revison</th>
+      <th>Author</th>
+      <th>Modificated</th>
+      <th>Tags</th>
+      <th>Content</th>
+    </tr></thead>
+    
+    <tbody>
+      {%if errors%}
+      <ul class="errorlist"><li>{{errors}}</li></ul>
+      {%endif%}
+      {% for rev in revisions %}
+      <tr class="{% cycle 'row1' 'row2' %}">
+        <th><label><input type="checkbox" name="Revisions" value="{{rev.0}}" id="id_Revisions_{{rev.0}}" /></label></th>
+        <td><a href="./{{rev.0}}"> rev {{rev.0}}</a></td>
+        <td>{{rev.1}}</td>
+        <td>{{rev.2|date:"jS F Y H:i:s"}}</td>
+        <td>{{rev.3|safe}}</td>
+        <td>{{rev.4|safe}}</td>
+      </tr>
+      {% endfor %}
+    </tbody></table>
+
       <input type="submit" align="left" value="view diff" class="default"/>
       <input type="button" align="left" value="cancel" onclick="location.href='../'"/> 
     </form> 
