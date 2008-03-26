@@ -337,37 +337,38 @@ def view_file(request, file, page, type):
 #------------------------------------------------------------------------
 
 def view_revisions(request, page_title):
-#  try:
-  pageTitle = WikiPageTitle.objects.get(title=page_title)
-  revisions = WikiPageContent.objects.filter(title=pageTitle)
-  choices = []
-  for rev in revisions:
-    text = rev.title.title + ' rev ' + str(rev.revision) 
-    choices.append((str(rev.revision), text))
-  print(choices)
+  try:
+    pageTitle = WikiPageTitle.objects.get(title=page_title)
+    revisions = list(WikiPageContent.objects.filter(title=pageTitle))
+    rev_list = []
+    errors = None
 
+    rev = revisions.pop(0)
+    text = ' rev 0  Author ' + rev.author + '  modification time ' + str(rev.modificationTime) + '  tags ' + rev.tags + '  content ' + rev.content
+    rev_list.append(('0', rev.author, rev.modificationTime, rev.tags,   rev.content))
+    old_rev = rev
 
-  if request.method == 'GET':
-    form = Form()
-    form.base_fields['Revisions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple())
+    for rev in revisions:
+      diff_content = TextDiff(old_rev.content, rev.content).getDiff()
+      diff_tags = TextDiff(old_rev.tags, rev.tags).getDiff()
+      text = ' rev ' + str(rev.revision) + ' Author ' + rev.author + '  modification time ' + str(rev.modificationTime) + '  tags ' + diff_tags + '  content ' + diff_content
+      rev_list.append((str(rev.revision), rev.author,  rev.modificationTime, diff_tags, diff_content))
+      old_rev = rev
 
-
-  elif request.method == 'POST':
-    form = Form(request.POST)
-    if form.is_valid():
-      selected = form.cleaned_data['Revisions'] 
-      if len(selected) != 2:
-        form.errors['Revisions'] = [unicode('You must select exactly two revisions for diff')]
-      else:
+    if request.method == 'POST':
+      try:
+        selected = request.POST.getlist('Revisions') 
         rev1 = selected[0]
         rev2 = selected[1]
-        response = HttpResponseRedirect("/wiki/%s/diff/?r1=%s&r2=%s" % (page_title, rev1, rev2))
-        return response
+        return HttpResponseRedirect("/wiki/%s/diff/?r1=%s&r2=%s" % (page_title, rev1, rev2))
+      except:
+        errors = 'You must select exactly two revisions for diff'
 
-  return render_to_response('wiki/rev_list.html', {'list': revisions, 'form': form},
+    return render_to_response('wiki/rev_list.html', {'title':'Revision List', 'revisions': rev_list, 
+                                                     'errors': errors},
                         context_instance=template.RequestContext(request))
-#  except:
-#    raise Http404
+  except:
+    raise Http404
 
 #------------------------------------------------------------------------
 
