@@ -31,7 +31,7 @@ def get_user_name (request):
  
   if request.user.first_name:
     if request.user.last_name:
-      return "%s %s" % (request.user.first_name, request.user.last_name)	
+      return "%s %s" % (request.user.first_name, request.user.last_name)        
     else: 
       return request.user.first_name
   else:
@@ -204,7 +204,7 @@ def create_page(request, page_title):
       pageTitle = WikiPageTitle()
       pageTitle.title = page_title
       editForm = WikiEditForm(initial={'revision': pageTitle.head_revision, 'title' : pageTitle.title,
-					'author':get_user_name(request)})
+                                        'author':get_user_name(request)})
     else:
       return HttpResponseRedirect("/wiki/%s/" % page_title)
 
@@ -270,7 +270,7 @@ def edit_page(request, page_title):
   else:
     page.revision = pageTitle.head_revision + 1
     editForm = WikiEditForm(instance = page, initial={'revision': page.revision, 'title' : page_title,
-						      'author':get_user_name(request)})
+                                                      'author':get_user_name(request)})
 
   return render_to_response('wiki/edit_page.html', {'form': editForm, 'page': page, 
                                                     'title': 'Edit page', 'view_conflict': view_conflict,
@@ -334,7 +334,7 @@ def view_file(request, file, page, type):
 
   return HttpResponse(content=(b64decode(fileObj.data)), content_type="binary/octet-stream") 
 
-#------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 
 def view_revisions(request, page_title):
   try:
@@ -433,7 +433,7 @@ def view_permissions(request):
 #          print("Group %s i=%s" % (gr,i))
 #          groupChoices[cand.subgroup]=((str(cand.subgroup),str(gr.name),"1"))   
 #        except:
-#	  k=0
+#         k=0
 #    i=i+1
 
 #  for perm in EditUser.user_permissions.all():
@@ -451,7 +451,7 @@ def view_permissions(request):
   if request.method == 'GET':
     lastUserID = EditUser.id
     form = PermissionsForm(initial = {'Permissions': init, 'User': str(userid),
-				      'Groups':groupInit});
+                                      'Groups':groupInit});
     #form.base_fields['Permissions'] = MultipleChoiceField(choices=choices, widget=CheckboxSelectMultiple(),
     #                                  initial = {'choices': 0})
     #form.base_fields['Groups'] = MultipleChoiceField(choices=groupChoices, widget=CheckboxSelectMultiple())
