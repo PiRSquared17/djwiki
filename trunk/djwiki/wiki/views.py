@@ -405,9 +405,6 @@ def view_permissions(request):
      EditUser = request.user
   lastUserID = EditUser.id
 
-  print("Edit permissions for user")
-  print("Name %s ID %s" % (EditUser.username,userid))
-
   groupChoices = []
   groupInit = []
   groups = []
@@ -420,24 +417,7 @@ def view_permissions(request):
       groupChoices.append((str(i),str(group.name)))
     groups.append(group)
     i=i+1
-  i=0
-#  print("GroupManager")
-#  print(GroupManager.objects.all())
-#  for group in Group.objects.all():
-#   print("Getting subgroups for group %s ID = %s" % (group, group.id)) 
-#    for cand in GroupManager.objects.all():
-#      if cand.group == group.id:
-#        print (cand.subgroup)
-#        try:
-#          gr = Group.objects.get(id = cand.subgroup)
-#          print("Group %s i=%s" % (gr,i))
-#          groupChoices[cand.subgroup]=((str(cand.subgroup),str(gr.name),"1"))   
-#        except:
-#         k=0
-#    i=i+1
 
-#  for perm in EditUser.user_permissions.all():
-#    print(perm)
   i=0
   for perm in Permission.objects.all():
     if perm in EditUser.user_permissions.all():
@@ -527,41 +507,15 @@ def add_group(request):
   elif request.method == 'POST':
     form = CreateGroupForm(request.POST)
     name = form.data.getlist('groupname')[0]
-    newgroup=Group.objects.get_or_create(name = name)[0]
-    print(Group.objects.get(name=name))
-    update_group(form,newgroup)
-    print(name)
 
-    
-
-#    permsSelection = form.data.getlist('Permissions') 
-#    group.permissions.clear()
-#    for sel in permsSelection:
-#      print(sel)
-#      group.permissions.add(permissions[int(sel)])
-#    group.save()
-#    groupsSelection = form.data.getlist('Groups') 
-#    group.groups.clear()
-#    for sel in groupsSelection:
-#      print(sel)
-#      subgroup = Group.objects.get(id = int(sel))
-#      for p in subgroup.permissions.all():
-#        group.permissions.add(p) 
-#    group.save()
-
-#    groupSelection = form.data.getlist('Groups') 
-#    print(groupSelection)
-#    for sel in groupSelection:
-#      print("************************")
-#      print("Adding subgroup")
-#      print(sel)
-#      groupLink = GroupManager.objects.get_or_create(group=group.id,subgroup = int(sel))
-#      groupLink[0].save()
-#      print(groupLink)
-#      group.permissions.add(permissions[int(sel)])
-#    group.save()
-    url = '/wiki/addgroup/'
-    return HttpResponseRedirect(url)
+    try:
+      newgroup=Group.objects.get(name = name)      
+      form.errors['groupname'] = [unicode("Group %s already exists" % name)]
+    except:
+      newgroup=Group.objects.create(name = name)
+      update_group(form,newgroup)
+      return HttpResponseRedirect("/wiki/addgroup/")
+   
 
   return render_to_response('wiki/add_group.html', {'list': None, 'form': form,
                           'groupChoices': groupChoices, 'permsChoices':permsChoices},
