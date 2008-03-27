@@ -7,6 +7,8 @@
     <h1>{{title}}</h1>
     <br/>
 
+  {%if perms.wiki.can_manage %} 
+
     <form method="post" action="" name="form">
       <tr><th><label for="id_User_0">User:</label></th><td>
         {{ form.User }}
@@ -27,5 +29,10 @@
       <input type="submit" align="left" value="Apply" class="default"/>
       <input type="button" align="left" value="cancel" onclick="location.href='/wiki/home/'"/> 
     </form>
+
+  {% else %}
+     <h1> You can not manage permissions </h1>
+  {% endif %}
+
 
 {% endblock %}

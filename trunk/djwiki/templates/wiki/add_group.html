@@ -7,10 +7,12 @@
     <h1>{{title}}</h1>
     <br/>
 
+  {%if perms.wiki.can_manage %} 
+  
+
     <form method="post" action="" name="form">
-      <tr><th><label for="id_User_0">Groupname:</label></th><td>
-        {{ form.groupname }}
-      </td></tr><br><br>
+      <table> {{ form.as_table }} </table>
+      <br/><br/>
 
       <tr><th><label for="id_Groups_0">Groups:</label></th><td><ul>
       {% for choice in groupChoices %}
@@ -27,5 +29,7 @@
       <input type="submit" align="left" value="Apply" class="default"/>
       <input type="button" align="left" value="cancel" onclick="location.href='/wiki/home/'"/> 
     </form>
-
+  {% else %}
+     <h1> You can not manage permissions </h1>
+  {% endif %}
 {% endblock %}
