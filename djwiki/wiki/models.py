@@ -91,6 +91,9 @@ class GroupManager (models.Model):
   subgroup = models.IntegerField()
   class Meta:
     unique_together = ("group", "subgroup")
+    permissions = (
+            ("can_manage", "Can manage permissions"),
+        )
   class Admin:
     pass
   def __unicode__(self):
