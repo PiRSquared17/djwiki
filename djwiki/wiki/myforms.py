@@ -54,7 +54,7 @@ class UserParamForm(Form):
 class PermissionsForm(Form):
     from django.contrib.auth.models import User
     User = ModelChoiceField (queryset=User.objects.filter(is_active=True), 
-            widget=Select(attrs={'onchange':'javasctipt: submitform()'}))     
+            widget=Select(attrs={'onchange':'javasctipt: document.form.submit();'}))     
  
     Groups = MultipleChoiceField(widget=CheckboxSelectMultiple)
 #    Permissions = MultipleChoiceField(widget=CheckboxSelectMultiple)
@@ -64,4 +64,4 @@ class CreateGroupForm(Form):
 
 class EditGroupForm(Form):
     groupname =  ModelChoiceField (queryset=Group.objects.all(), 
-            widget=Select(attrs={'onchange':'javasctipt: submitform()'}))     
+            widget=Select(attrs={'onchange':'javasctipt: document.form.submit();'}))     
