@@ -23,8 +23,10 @@
 
       {% spaceless %}
 
-      <img name="btn_backward" src="/wiki/static/image/home/backward_up.png" alt="backward" onclick="history.back()" onmouseover="document.btn_backward.src='/wiki/static/image/home/backward_over.png'" onmouseout="document.btn_backward.src='/wiki/static/image/home/backward_up.png'"/>
-      <img name="btn_forward" src="/wiki/static/image/home/forward_up.png" alt="forward" onclick="history.forward()" onmouseover="document.btn_forward.src='/wiki/static/image/home/forward_over.png'" onmouseout="document.btn_forward.src='/wiki/static/image/home/forward_up.png'"/>
+      <img name="btn_home" src="/wiki/static/image/home/home_up.png" alt="home"
+           onclick="location.href='/wiki'" 
+           onmouseover="document.btn_home.src='/wiki/static/image/home/home_over.png'" 
+           onmouseout="document.btn_home.src='/wiki/static/image/home/home_up.png'"/>
       <img name="btn_login" src="/wiki/static/image/home/login_up.png" 
            alt="login" onclick="location.href='/accounts/login/?next=/wiki/home/'" 
            onmouseover="document.btn_login.src='/wiki/static/image/home/login_over.png'"
@@ -47,10 +49,26 @@
            onclick="location.href='/wiki/list/'" 
            onmouseover="document.btn_list.src='/wiki/static/image/home/list_over.png'" 
            onmouseout="document.btn_list.src='/wiki/static/image/home/list_up.png'"/>
-      <img name="btn_home" src="/wiki/static/image/home/home_up.png" alt="home"
-           onclick="location.href='/wiki'" 
-           onmouseover="document.btn_home.src='/wiki/static/image/home/home_over.png'" 
-           onmouseout="document.btn_home.src='/wiki/static/image/home/home_up.png'"/>
+
+      {%if perms.wiki.can_manage %} 
+
+      <img name="btn_permissions" src="/wiki/static/image/home/permissions_up.png" alt="permissions" 
+           onclick="location.href='/wiki/permissions/'" 
+           onmouseover="document.btn_permissions.src='/wiki/static/image/home/permissions_over.png'" 
+           onmouseout="document.btn_permissions.src='/wiki/static/image/home/permissions_up.png'"/>
+
+      <img name="btn_add_group" src="/wiki/static/image/home/add_group_up.png" alt="add group" 
+           onclick="location.href='/wiki/addgroup/'" 
+           onmouseover="document.btn_add_group.src='/wiki/static/image/home/add_group_over.png'" 
+           onmouseout="document.btn_add_group.src='/wiki/static/image/home/add_group_up.png'"/>
+
+      <img name="btn_edit_group" src="/wiki/static/image/home/edit_group_up.png" alt="edit group" 
+           onclick="location.href='/wiki/editgroup/'" 
+           onmouseover="document.btn_edit_group.src='/wiki/static/image/home/edit_group_over.png'" 
+           onmouseout="document.btn_edit_group.src='/wiki/static/image/home/edit_group_up.png'"/>
+
+      {% endif %}
+
 
       {% endspaceless %}
 
@@ -61,19 +79,16 @@
           {% if user.last_name %}
               {{ user.last_name|escape }} 
           {% endif %}
-	  {% if user.username%}
+          {% if user.username%}
               ({{ user.username }})
-	  <A HREF="/wiki/register">Edit profile</A>
+          <A HREF="/wiki/register">Edit profile</A>
           {% endif %}
       {% else %} {% if user.username%}
           {{ user.username }}
-	  <A HREF="/wiki/register">Edit profile</A>
+          <A HREF="/wiki/register">Edit profile</A>
       {% else %}
           Anonymous.</strong> You may <A HREF="/wiki/register">register</A>
       {% endif %}  {% endif %} 
-	 -------------<A HREF="/wiki/permissions">permissions</A> 
-	 -------------<A HREF="/wiki/addgroup">add group</A> 
-	 -------------<A HREF="/wiki/editgroup">edit group</A> 
 
     <hr/> 
 
