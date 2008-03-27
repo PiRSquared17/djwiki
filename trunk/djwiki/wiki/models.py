@@ -3,6 +3,7 @@ from tagging.models import Tag
 from tagging.fields import TagField
 import datetime
 import tagging
+from django.contrib.auth.models import Group
 
 class WikiPageTitle(models.Model):
   title = models.CharField(max_length=100, unique=True)
@@ -92,3 +93,15 @@ class GroupManager (models.Model):
     unique_together = ("group", "subgroup")
   class Admin:
     pass
+  def __unicode__(self):
+    return "group " + Group.objects.get(id=self.group).name + " subgroup " + Group.objects.get(id=self.subgroup).name      
+
+
+class GroupBasePerm (models.Model):
+  group_id = models.IntegerField()
+  permission_id = models.IntegerField()
+  class Meta:
+    unique_together = ("group_id", "permission_id")
+  class Admin:
+    pass
+
