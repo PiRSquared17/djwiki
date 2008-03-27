@@ -526,24 +526,28 @@ def add_group(request):
     form = CreateGroupForm(initial = {'groupname': 'groupname'});
   elif request.method == 'POST':
     form = CreateGroupForm(request.POST)
-    name = form.data.getlist('groupname')[0];
-    group = Group.objects.get_or_create(name = name)
-    group = Group.objects.get(name = name)
+    name = form.data.getlist('groupname')[0]
+    newgroup=Group.objects.get_or_create(name = name)[0]
+    print(Group.objects.get(name=name))
+    update_group(form,newgroup)
+    print(name)
 
-    permsSelection = form.data.getlist('Permissions') 
-    group.permissions.clear()
-    for sel in permsSelection:
-      print(sel)
-      group.permissions.add(permissions[int(sel)])
-    group.save()
-    groupsSelection = form.data.getlist('Groups') 
-    group.groups.clear()
-    for sel in groupsSelection:
-      print(sel)
-      subgroup = Groups.object.get(id = int(sel))
-      for p in subgroup.permissions:
-        group.permissions.add(p) 
-    group.save()
+    
+
+#    permsSelection = form.data.getlist('Permissions') 
+#    group.permissions.clear()
+#    for sel in permsSelection:
+#      print(sel)
+#      group.permissions.add(permissions[int(sel)])
+#    group.save()
+#    groupsSelection = form.data.getlist('Groups') 
+#    group.groups.clear()
+#    for sel in groupsSelection:
+#      print(sel)
+#      subgroup = Group.objects.get(id = int(sel))
+#      for p in subgroup.permissions.all():
+#        group.permissions.add(p) 
+#    group.save()
 
 #    groupSelection = form.data.getlist('Groups') 
 #    print(groupSelection)
@@ -586,10 +590,11 @@ def edit_group(request):
 
   i = 0
   for perm in Permission.objects.all():
-    if perm in EditGroup.permissions.all():
+    try:
+      baseperm = GroupBasePerm.objects.get(group_id=EditGroup.id,permission_id=perm.id)
       permsChoices.append((str(i), str(perm),"1"))
       init.append(str(i))
-    else:
+    except:
       permsChoices.append((str(i), str(perm)))
     permissions.append(perm);
     i=i+1
@@ -597,11 +602,14 @@ def edit_group(request):
   groups = []
   i = 0
 
-  for group in Group.objects.all():
-    groupChoices.append((str(i), str(group)))
+  for group in Group.objects.order_by('id'):
+    try:
+      subgroup = GroupManager.objects.get(group=EditGroup.id,subgroup=group.id)
+      groupChoices.append((str(i), str(group),"1"))
+    except:
+      groupChoices.append((str(i), str(group)))
     groups.append(group);
     i=i+1
-
 
   if request.method == 'GET':
     lastGroupID = EditGroup.id
@@ -613,18 +621,9 @@ def edit_group(request):
     print("***************")
     if str(gname) == str(lastGroupID):
       print('NEED PARAM UPDATE')
-      permsSelection = form.data.getlist('Permissions') 
-      EditGroup.permissions.clear()
-      for sel in permsSelection:
-        print(sel)
-        EditGroup.permissions.add(permissions[int(sel)])
-      groupsSelection = form.data.getlist('Groups') 
-      for sel in groupsSelection:
-        print(sel)
-        subgroup = Group.objects.get(id = int(sel)+1)
-        for p in subgroup.permissions.all():
-          EditGroup.permissions.add(p) 
-      EditGroup.save()
+      gname = form.data.getlist('groupname')[0];
+      EditGroup = Group.objects.get(id=gname)
+      update_group(form,EditGroup)
 
     else:
       print("OLD USER, NO UPDATE") 
@@ -637,3 +636,32 @@ def edit_group(request):
                           'groupChoices': groupChoices, 'permsChoices':permsChoices},
                         context_instance=template.RequestContext(request))
 #----------------------------------------------------------------------
+def fill_permissions(aGroup):
+  aGroup.permissions.clear()
+  subgroups = GroupManager.objects.filter(group=aGroup.id)
+  for subgroup in subgroups:
+    for perm in Group.objects.get(id=subgroup.subgroup).permissions.all():
+      aGroup.permissions.add(perm)
+  baseperm = GroupBasePerm.objects.filter(group_id=aGroup.id)
+  for perm in baseperm:
+    aGroup.permissions.add(Permission.objects.get(id=perm.permission_id))
+  aGroup.save() 
+#----------------------------------------------------------------------
+def update_group(form,EditGroup):
+  permsSelection = form.data.getlist('Permissions') 
+  GroupBasePerm.objects.filter(group_id=EditGroup.id).delete()
+  GroupManager.objects.filter(group=EditGroup.id).delete()
+       
+  for sel in permsSelection:
+    GroupBasePerm.objects.get_or_create(group_id=EditGroup.id,permission_id=int(sel)+1)
+        
+  groupsSelection = form.data.getlist('Groups') 
+  print(groupsSelection)
+  for sel in groupsSelection:
+    subgroup = Group.objects.get(id = int(sel)+1)
+    GroupManager.objects.get_or_create(group=EditGroup.id,subgroup=int(sel)+1)
+  fill_permissions(EditGroup)
+  parentGroups = GroupManager.objects.filter(subgroup=EditGroup.id)
+  for parent in parentGroups:
+    fill_permissions(Group.objects.get(id=parent.group))
+
