@@ -514,7 +514,7 @@ def add_group(request):
     except:
       newgroup=Group.objects.create(name = name)
       update_group(form,newgroup)
-      return HttpResponseRedirect("/wiki/addgroup/")
+      return HttpResponseRedirect("/wiki/editgroup/?f= %s" % newgroup.id)
    
 
   return render_to_response('wiki/add_group.html', {'list': None, 'form': form,
@@ -529,19 +529,34 @@ def edit_group(request):
   perms = request.user.user_permissions
   permsChoices = []
   permissions = []
-  init=[]
-  i = 0
+  init=[] 
+  i=0
+  print("START")
   if 'f' in request.GET:
      groupid = request.GET['f']
-     EditGroup = Group.objects.get(id=groupid) 
+     try:
+       EditGroup = Group.objects.get(id=groupid) 
+     except:
+       try:
+         EditGroup = Group.objects.all()[0]
+       except:
+         return render_to_response('wiki/edit_group.html',
+                        {'permsChoices': None, 'groupChoices':None}, 
+                        context_instance=template.RequestContext(request))
   else:
-     EditGroup = Group.objects.get(id=1)
-     groupid = 1 
+     try:
+       EditGroup = Group.objects.all()[0]
+     except:
+       return render_to_response('wiki/edit_group.html', 
+                        {'permsChoices': None, 'groupChoices':None}, 
+                        context_instance=template.RequestContext(request))
+        
+  groupid = EditGroup.id
   lastGroupID = EditGroup.id
-
+ 
   print("Edit permissions for group")
   print("Name %s ID %s" % (EditGroup.name,groupid))
-
+ 
   i = 0
   for perm in Permission.objects.all():
     try:
@@ -552,6 +567,9 @@ def edit_group(request):
       permsChoices.append((str(i), str(perm)))
     permissions.append(perm);
     i=i+1
+
+
+
   groupChoices = []
   groups = []
   i = 0
@@ -559,34 +577,52 @@ def edit_group(request):
   for group in Group.objects.order_by('id'):
     try:
       subgroup = GroupManager.objects.get(group=EditGroup.id,subgroup=group.id)
-      groupChoices.append((str(i), str(group),"1"))
+      groupChoices.append((group.id, str(group),"1"))
     except:
-      groupChoices.append((str(i), str(group)))
+      groupChoices.append((group.id, str(group)))
     groups.append(group);
     i=i+1
-
+  print(groupChoices)
   if request.method == 'GET':
     lastGroupID = EditGroup.id
+    print(EditGroup.id)
     form = EditGroupForm(initial = {'groupname':str(EditGroup.id)});
   elif request.method == 'POST':
+    print(EditGroup.id)
     form = EditGroupForm(request.POST) 
-    gname = form.data.getlist('groupname')[0];
-    EditGroup = Group.objects.get(id=gname)
-    print("***************")
-    if str(gname) == str(lastGroupID):
-      print('NEED PARAM UPDATE')
-      gname = form.data.getlist('groupname')[0];
-      EditGroup = Group.objects.get(id=gname)
-      update_group(form,EditGroup)
-
+    delete_string = form.data.getlist('delete')
+    if delete_string[0]=='update':
+      gname = form.data.getlist('groupname')[0];   #Determine current group
+      try:  
+        EditGroup = Group.objects.get(id=gname)
+      except:
+        return HttpResponseRedirect("/wiki/editgroup/")
+      print("***************")
+      if str(gname) == str(lastGroupID):
+        print('NEED PARAM UPDATE')
+        gname = form.data.getlist('groupname')[0];
+        EditGroup = Group.objects.get(id=gname)
+        update_group(form,EditGroup)
+  
+      else:
+        print("OLD USER, NO UPDATE") 
+      print("***************")    
+      lastGroupID = EditGroup.id
+      url = '/wiki/editgroup/?f=%s' % EditGroup.id
+      
     else:
-      print("OLD USER, NO UPDATE") 
-    print("***************")    
-    lastGroupID = EditGroup.id
-    url = '/wiki/editgroup/?f=%s' % EditGroup.id
+      gname = form.data.getlist('groupname')[0];   #Determine current group
+      try:
+        EditGroup = Group.objects.get(id=gname)
+      except:
+        return HttpResponseRedirect("/wiki/editgroup/")
+      for group in GroupManager.objects.all():
+        if group.group==EditGroup.id or group.subgroup==EditGroup.id:
+           group.delete()
+      url = '/wiki/editgroup/?f=%s' % str(EditGroup.id+1)   
+      EditGroup.delete()
     return HttpResponseRedirect(url)
-
-  return render_to_response('wiki/add_group.html', {'list': perms, 'form': form,
+  return render_to_response('wiki/edit_group.html', {'list': perms, 'form': form,
                           'groupChoices': groupChoices, 'permsChoices':permsChoices},
                         context_instance=template.RequestContext(request))
 #----------------------------------------------------------------------
@@ -605,17 +641,19 @@ def update_group(form,EditGroup):
   permsSelection = form.data.getlist('Permissions') 
   GroupBasePerm.objects.filter(group_id=EditGroup.id).delete()
   GroupManager.objects.filter(group=EditGroup.id).delete()
-       
+  print ("QQQQQQQ")
+  print (permsSelection)    
   for sel in permsSelection:
     GroupBasePerm.objects.get_or_create(group_id=EditGroup.id,permission_id=int(sel)+1)
         
   groupsSelection = form.data.getlist('Groups') 
   print(groupsSelection)
   for sel in groupsSelection:
-    subgroup = Group.objects.get(id = int(sel)+1)
-    GroupManager.objects.get_or_create(group=EditGroup.id,subgroup=int(sel)+1)
+    subgroup = Group.objects.get(id = int(sel))
+    GroupManager.objects.get_or_create(group=EditGroup.id,subgroup=int(sel))
   fill_permissions(EditGroup)
   parentGroups = GroupManager.objects.filter(subgroup=EditGroup.id)
+  print parentGroups
   for parent in parentGroups:
     fill_permissions(Group.objects.get(id=parent.group))
 
