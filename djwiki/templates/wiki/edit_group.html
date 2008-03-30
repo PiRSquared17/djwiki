@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Permissions {% endblock %}
+
+
+{% block content %}
+
+  <SCRIPT language="JavaScript">
+    function delete_group()
+    {
+        var isConfirmed = confirm("You are going to remove current group!\r\n");
+        if(isConfirmed)
+        {
+          document.form.delete.value = "delete";
+          document.form.submit();
+        }
+    }
+  </SCRIPT> 
+
+
+  <hr/><br/>
+  <h1>{{title}}</h1>
+  <br/>
+
+  {%if perms.wiki.can_manage %}
+
+    {%if not groupChoices %}
+      There is no groups yet! <br><br></td></tr>
+    {% endif %}
+  
+
+    <form method="post" action="" name="form">
+      {%if groupChoices %}
+        <table> {{ form.as_table }} </table>
+        <input type="hidden" name="delete" value="update" onclick="document.Delete.value='qqqqqq';"  onmouseover="fun1();"  id="id_Delete_0" />      
+        <input type="submit" align="left" value="Update" class="default"/>
+      {%endif%}
+
+      {%if not groupChoices%}
+        <input type="button" align="left" value="AddGroup" onclick="location.href='/wiki/addgroup/'"/> 
+        <br/><br/>
+      {% endif %}
+      {%if groupChoices %}
+        <input type= "button" onClick="javascript: delete_group();" value= "Delete current group">
+        <input type= "button" onClick="location.href='/wiki/addgroup/'" value= "Create new group">
+      {%endif%}
+      <input type="button" align="left" value="Cancel" onclick="location.href='/wiki/home/'"/> 
+      {% if groupChoices %}
+        <br/><br/>
+        <tr><th><label for="id_Groups_0">Groups:</label></th><td><ul>
+        {% for choice in groupChoices %}
+          <li><label><input {% ifequal  choice.2 "1" %} checked="checked" {% endifequal %} type="checkbox" name="Groups" value="{{choice.0}}" id="id_Groups_0" /> {{choice.1}} </label></li>
+        {% endfor %}
+        </ul></td></tr>  
+        <tr><th><label for="id_Permissions_0">Permissions:</label></th><td><ul>
+        {% for choice in permsChoices %}
+          <li><label><input {% ifequal  choice.2 "1" %} checked="checked" {% endifequal %} type="checkbox" name="Permissions" value="{{choice.0}}" id="id_Permissions_0" /> {{choice.1}} </label></li>
+        {% endfor %}
+        </ul></td></tr>
+      {%endif%}
+    </form>
+  {% else %}
+     <h1> You can not manage permissions </h1>
+  {% endif %}
+{% endblock %}
