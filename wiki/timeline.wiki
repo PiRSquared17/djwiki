@@ -45,12 +45,12 @@ Alpha2 (2008-03-13):
 Spec ():
   * Design (ER-diagram) _*Done*_
 
-Beta ():
+Beta (): completed 27.03.08
   * xmlrpc (SQL, transactions) _*Done*_
-    * provide functions to manipulte with wiki-pages, categories and etc.
-    * connect to the DB directly via mod !MySqlDb
+    * provide functions to manipulte with wiki-pages, categories and etc. _*Done*_
+    * connect to the DB directly via mod !MySqlDb _*Done*_
   * authorization _*Done*_
   * roles
     * base privileges _*Done*_
-    * hierarchy
+    * hierarchy _*Done*_
   * ssl
