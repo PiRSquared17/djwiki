@@ -12,8 +12,8 @@
   {# {%if perms.wiki.can_view %} #}
   {% if 1 %}
 
-    <body type="text/javascript" onload="toggleBox('diff page', 0)"/>
- 
+    <img src="dummy" alt="" onerror="toggleBox('diff_page', 0)"/> 
+
     <h1>{{ page.title }}</h1>
     <hr/> 
 
@@ -30,7 +30,7 @@
 
     </h2>  <hr/> 
     
-    <div id="undiff page">
+    <div id="undiff_page">
 
     <div class="content">
        {% ifequal page.markupType "markdown" %}
@@ -42,7 +42,7 @@
 
     </div>
 
-    <div id="diff page">
+    <div id="diff_page">
     
     <h3>rev{{page.revision}} diff rev{{page.prev_revision}}</h3>
      
@@ -90,7 +90,7 @@
 
 
     {% ifnotequal page.revision 0 %} 
-    <input type="button" value="show diff" onclick="if(value == 'show diff'){toggleBox('undiff page',0);toggleBox('diff page',1); value='hide diff';}else{toggleBox('undiff page',1);toggleBox('diff page',0); value='show diff'}" class="default"/>
+    <input type="button" value="show diff" onclick="if(value == 'show diff'){toggleBox('undiff_page',0);toggleBox('diff_page',1); value='hide diff';}else{toggleBox('undiff_page',1);toggleBox('diff_page',0); value='show diff'}" class="default"/>
     {% endifnotequal %}
 
     {% ifequal page.revision pageTitle.head_revision %} 

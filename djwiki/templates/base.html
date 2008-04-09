@@ -80,14 +80,14 @@
               {{ user.last_name|escape }} 
           {% endif %}
           {% if user.username%}
-              ({{ user.username }})
-          <A HREF="/wiki/register">Edit profile</A>
+              ({{ user.username }}) </strong>
+          <a href="/wiki/register">Edit profile</a>
           {% endif %}
       {% else %} {% if user.username%}
-          {{ user.username }}
-          <A HREF="/wiki/register">Edit profile</A>
+          {{ user.username }} </strong>
+          <a href="/wiki/register">Edit profile</a>
       {% else %}
-          Anonymous.</strong> You may <A HREF="/wiki/register">register</A>
+          Anonymous.</strong> You may <a href="/wiki/register">register</a>
       {% endif %}  {% endif %} 
 
     <hr/> 
