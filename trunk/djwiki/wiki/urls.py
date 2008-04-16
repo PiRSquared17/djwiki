@@ -8,7 +8,7 @@ from djwiki import settings
 urlpatterns = patterns('django.views.generic.simple',
   (r'^list/$','direct_to_template', {'template':'wiki/pages_list.html',
                                      'extra_context': {'title':'Pages list', 
-                                                       'list':WikiPageTitle.objects.all()}}),
+                                                       'list' : WikiPageTitle.objects.all()}}),
   (r'^$', 'redirect_to', {'url': '/wiki/home/'}),
 )
 
