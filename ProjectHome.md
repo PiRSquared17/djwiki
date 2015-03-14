@@ -1,0 +1,1 @@
+In this project we are going to develop a sample wiki engine written in python/django. The main aims are to learn django framework, web and db development.
